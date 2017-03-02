@@ -10,7 +10,7 @@
     <PackageArchitecture>x64</PackageArchitecture>
     <PackageIdentityName>54014835-9bba-472b-bf12-b7d15c2fdce2</PackageIdentityName>
     <PackageIdentityPublisher>CN=Dan</PackageIdentityPublisher>
-    <IntermediateOutputPath>C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\x64\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\x64\Debug\</IntermediateOutputPath>
     <RemoteDeploymentType>CopyToDevice</RemoteDeploymentType>
     <PackageRegistrationPath>
     </PackageRegistrationPath>
@@ -24,68 +24,68 @@
     <JitOptimizationSuppressed>True</JitOptimizationSuppressed>
   </PropertyGroup>
   <ItemGroup>
-    <AppXManifest Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\AppxManifest.xml">
+    <AppXManifest Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2017-03-01T02:31:03.196</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.exe">
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.exe">
       <PackagePath>DX11UWA.exe</PackagePath>
-      <Modified>2017-03-02T18:13:34.973</Modified>
+      <Modified>2017-03-02T19:28:58.307</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.winmd">
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.winmd">
       <PackagePath>DX11UWA.winmd</PackagePath>
       <Modified>2017-03-01T02:31:01.732</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\LockScreenLogo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\LockScreenLogo.scale-200.png">
       <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
       <Modified>2015-09-20T22:20:42.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\SplashScreen.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\SplashScreen.scale-200.png">
       <PackagePath>Assets\SplashScreen.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2015-09-20T22:20:42.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\Square150x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\Square150x150Logo.scale-200.png">
       <PackagePath>Assets\Square150x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2015-09-20T22:20:42.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\Square44x44Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\Square44x44Logo.scale-200.png">
       <PackagePath>Assets\Square44x44Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2015-09-20T22:20:42.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
       <PackagePath>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2015-09-20T22:20:42.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\StoreLogo.png">
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\StoreLogo.png">
       <PackagePath>Assets\StoreLogo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2015-09-20T22:20:42.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\Wide310x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\Wide310x150Logo.scale-200.png">
       <PackagePath>Assets\Wide310x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2015-09-20T22:20:42.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\SamplePixelShader.cso">
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\SamplePixelShader.cso">
       <PackagePath>SamplePixelShader.cso</PackagePath>
-      <Modified>2017-03-02T18:13:27.426</Modified>
+      <Modified>2017-03-02T19:28:48.399</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\SampleVertexShader.cso">
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\SampleVertexShader.cso">
       <PackagePath>SampleVertexShader.cso</PackagePath>
-      <Modified>2017-03-02T18:13:27.536</Modified>
+      <Modified>2017-03-02T19:28:48.527</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.UniversalCRT.Debug\10.0.10586.0\\redist\Debug\X64\ucrtbased.dll">
       <PackagePath>ucrtbased.dll</PackagePath>
       <Modified>2016-03-29T13:24:44.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\Graphics2Project\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\resources.pri">
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>2017-03-01T02:31:02.834</Modified>
