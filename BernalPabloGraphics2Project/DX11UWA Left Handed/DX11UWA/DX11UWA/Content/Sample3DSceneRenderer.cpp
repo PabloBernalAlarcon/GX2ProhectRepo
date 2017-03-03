@@ -1,4 +1,5 @@
-﻿#include "pch.h"
+﻿
+#include "pch.h"
 #include "Sample3DSceneRenderer.h"
 
 #include "..\Common\DirectXHelper.h"
@@ -329,4 +330,36 @@ void Sample3DSceneRenderer::ReleaseDeviceDependentResources(void)
 	m_constantBuffer.Reset();
 	m_vertexBuffer.Reset();
 	m_indexBuffer.Reset();
+}
+#pragma warning(disable:4996)  
+bool Sample3DSceneRenderer::LoadObject(const char* _path, std::vector<VertexPositionUVNormal> &toload) {
+	
+	FILE * file = fopen(_path, "r"); 
+	if (file == NULL) {
+		printf("Impossible to open the file !\n");
+		return false;
+	}
+	while (true)
+	{
+		char lineHeader[128];
+		int res = fscanf(file, "%s", lineHeader);
+		if (res == EOF)
+		{
+			break;
+		}
+
+		if (strcmp(lineHeader, "v") == 0) {
+
+			fscanf(file, "%f %f %f\n",&toload.pos.x,&toload.pos.y,&toload.pos.x); // load the adress of xyz
+		}
+		else if (strcmp(lineHeader, "vt") == 0) {
+
+			fscanf(file, "%f %f\n", &toload.uv.x, &toload.uv.y); //load the adress of u and v
+		}
+		else if (strcmp(lineHeader, "vn") == 0) {
+			fscanf(file, "%f %f %f\n", &toload.normal.x, &toload.normal.y, &toload.normal.z); //load the adress of the uvs
+		}
+	}
+
+	return true;
 }

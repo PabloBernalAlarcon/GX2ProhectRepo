@@ -1,2 +1,4 @@
-﻿  DX11UWA.vcxproj -> C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.exe
+﻿  Sample3DSceneRenderer.cpp
+c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\content\sample3dscenerenderer.cpp(363): warning C4715: 'DX11UWA::Sample3DSceneRenderer::LoadObject': not all control paths return a value
+  DX11UWA.vcxproj -> C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.exe
   DX11UWA.vcxproj -> C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.pdb (Partial PDB)

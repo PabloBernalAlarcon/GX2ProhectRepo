@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿
+#pragma once
 
 #include "..\Common\DeviceResources.h"
 #include "ShaderStructures.h"
@@ -7,7 +8,8 @@
 
 namespace DX11UWA
 {
-	// This sample renderer instantiates a basic rendering pipeline.
+	
+	// This sample rederer instantiates a basic rendering pipeline.
 	class Sample3DSceneRenderer
 	{
 	public:
@@ -21,6 +23,7 @@ namespace DX11UWA
 		void TrackingUpdate(float positionX);
 		void StopTracking(void);
 		inline bool IsTracking(void) { return m_tracking; }
+		bool LoadObject(const char* _path,std::vector<VertexPositionUVNormal> &toload);
 
 		// Helper functions for keyboard and mouse input
 		void SetKeyboardButtons(const char* list);
