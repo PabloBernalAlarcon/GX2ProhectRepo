@@ -104,18 +104,60 @@
     <Image Include="Assets\StoreLogo.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\Kirby.dds">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Percy1.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\stafy_01.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\stafy_01.dds">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Percy1.dds">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Shrek.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\shrek.dds">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DX11UWA_TemporaryKey.pfx" />
+    <None Include="Assets\CHARACTER_Shrek.obj">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\linktheobj.obj">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\ballkirby.obj">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\percytrain.obj">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\AsfStafy00.obj">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Content\SamplePixelShader.hlsl">
       <Filter>Content\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Content\SampleVertexShader.hlsl">
+      <Filter>Content\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>Content\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader.hlsl">
       <Filter>Content\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

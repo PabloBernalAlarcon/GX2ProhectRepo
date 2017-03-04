@@ -1,0 +1,30 @@
+newmtl DS_Percy:Percy1
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd Percy1.png
+map_Ka Percy1.png
+Ni 1.00
+Ks 0.50 0.50 0.50
+Ns 96.08
+newmtl DS_Percy:Percy2
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 0.00 0.00 0.00
+map_Kd Percy2.png
+map_Ka Percy2.png
+Ni 1.00
+Ks 0.50 0.50 0.50
+Ns 96.08
+newmtl DS_Percy:PercyFace
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd PercyFace.png
+map_Ka PercyFace.png
+Ni 1.00
+Ks 0.50 0.50 0.50
+Ns 96.08

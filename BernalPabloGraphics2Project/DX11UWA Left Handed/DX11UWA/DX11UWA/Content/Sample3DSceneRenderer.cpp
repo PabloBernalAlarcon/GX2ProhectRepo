@@ -81,8 +81,15 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 	// Update or move camera here
 	UpdateCamera(timer, 1.0f, 0.75f);
 
+	m_ShrekconstantBufferData = m_constantBufferData;
+	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14159f)));
+
+	m_PercyconstantBufferData = m_constantBufferData;
+	XMStoreFloat4x4(&m_PercyconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14159f)));
+
 }
 
+#pragma region Movements
 // Rotate the 3D cube model a set amount of radians.
 void Sample3DSceneRenderer::Rotate(float radians)
 {
@@ -179,6 +186,8 @@ void Sample3DSceneRenderer::SetMousePosition(const Windows::UI::Input::PointerPo
 	m_currMousePos = const_cast<Windows::UI::Input::PointerPoint^>(pos);
 }
 
+#pragma endregion
+
 void Sample3DSceneRenderer::SetInputDeviceData(const char* kb, const Windows::UI::Input::PointerPoint^ pos)
 {
 	SetKeyboardButtons(kb);
@@ -218,7 +227,7 @@ void Sample3DSceneRenderer::Render(void)
 
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_camera))));
 
-
+#pragma region DrawtheCube
 	// Prepare the constant buffer to send it to the graphics device.
 	context->UpdateSubresource1(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0, 0);
 	// Each vertex is one instance of the VertexPositionColor struct.
@@ -237,6 +246,42 @@ void Sample3DSceneRenderer::Render(void)
 	context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
 	// Draw the objects.
 	context->DrawIndexed(m_indexCount, 0, 0);
+#pragma endregion
+
+
+
+#pragma region DrawKriby
+	context->UpdateSubresource1(m_ShrekconstantBuffer.Get(), 0, NULL, &m_ShrekconstantBufferData, 0, 0, 0);
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_ShrekvertexBuffer.GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(m_ShrekindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_ShrekinputLayout.Get());
+	context->VSSetShader(m_ShrekvertexShader.Get(), nullptr, 0);
+	context->VSSetConstantBuffers1(0, 1, m_ShrekconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	context->PSSetShader(m_ShrekpixelShader.Get(), nullptr, 0);
+	context->PSSetShaderResources(0, 1, m_ShrekResouceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_ShrekSamplerState.GetAddressOf());
+	//context->DrawIndexed(m_ShrekindexCount, 0, 0);
+#pragma endregion
+
+#pragma region DrawPercy
+	context->UpdateSubresource1(m_PercyconstantBuffer.Get(), 0, NULL, &m_PercyconstantBufferData, 0, 0, 0);
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_PercyvertexBuffer.GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(m_PercyindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_PercyinputLayout.Get());
+	context->VSSetShader(m_PercyvertexShader.Get(), nullptr, 0);
+	context->VSSetConstantBuffers1(0, 1, m_PercyconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	context->PSSetShader(m_PercypixelShader.Get(), nullptr, 0);
+	context->PSSetShaderResources(0, 1, m_PercyResouceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_PercySamplerState.GetAddressOf());
+	context->DrawIndexed(m_PercyindexCount, 0, 0);
+
+#pragma endregion
 }
 
 void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
@@ -267,7 +312,135 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
 		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&constantBufferDesc, nullptr, &m_constantBuffer));
 	});
+#pragma region kirbyShit
 
+	//Shrek Shit
+	loadVSTask = DX::ReadDataAsync(L"VertexShader.cso");
+	loadPSTask = DX::ReadDataAsync(L"PixelShader.cso");
+
+	auto createShrekVSTask = loadVSTask.then([this](const std::vector<byte>& fileData)
+	{
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateVertexShader(&fileData[0], fileData.size(), nullptr, &m_ShrekvertexShader));
+
+		static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "UV", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateInputLayout(vertexDesc, ARRAYSIZE(vertexDesc), &fileData[0], fileData.size(), &m_ShrekinputLayout));
+	});
+
+	auto createShrekPSTask = loadPSTask.then([this](const std::vector<byte>& fileData)
+	{
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreatePixelShader(&fileData[0], fileData.size(), nullptr, &m_ShrekpixelShader));
+
+		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&constantBufferDesc, nullptr, &m_ShrekconstantBuffer));
+	});
+
+	auto createShrekTask = (createShrekPSTask && createShrekVSTask).then([this]()
+	{
+		std::vector<VertexPositionUVNormal> ShrekVertices;
+		std::vector<unsigned int> ShrekIndices;
+		char * ItsAllOgreNow = "Assets/ballkirby.obj";
+		LoadObject(ItsAllOgreNow, ShrekVertices, ShrekIndices);
+
+		D3D11_SAMPLER_DESC SamDesc;
+		ZeroMemory(&SamDesc, sizeof(SamDesc));
+		SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&SamDesc, &m_ShrekSamplerState));
+		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/Kirby.dds", NULL, &m_ShrekResouceView));
+	
+		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
+		vertexBufferData.pSysMem = ShrekVertices.data();
+		vertexBufferData.SysMemPitch = 0;
+		vertexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(VertexPositionUVNormal) * ShrekVertices.size(), D3D11_BIND_VERTEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &m_ShrekvertexBuffer));
+
+
+		m_ShrekindexCount = ShrekIndices.size();
+
+		D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
+		indexBufferData.pSysMem = ShrekIndices.data();
+		indexBufferData.SysMemPitch = 0;
+		indexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(unsigned int) * ShrekIndices.size(), D3D11_BIND_INDEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_ShrekindexBuffer));
+	});
+
+#pragma endregion
+
+#pragma region PercyShit
+	//Percy Shit
+	loadVSTask = DX::ReadDataAsync(L"VertexShader.cso");
+	loadPSTask = DX::ReadDataAsync(L"PixelShader.cso");
+
+	auto createPercyVSTask = loadVSTask.then([this](const std::vector<byte>& fileData)
+	{
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateVertexShader(&fileData[0], fileData.size(), nullptr, &m_PercyvertexShader));
+
+		static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "UV", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateInputLayout(vertexDesc, ARRAYSIZE(vertexDesc), &fileData[0], fileData.size(), &m_PercyinputLayout));
+	});
+
+	auto createPercyPSTask = loadPSTask.then([this](const std::vector<byte>& fileData)
+	{
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreatePixelShader(&fileData[0], fileData.size(), nullptr, &m_PercypixelShader));
+
+		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&constantBufferDesc, nullptr, &m_PercyconstantBuffer));
+	});
+
+	auto createPercyTask = (createPercyPSTask && createPercyVSTask).then([this]()
+	{
+		std::vector<VertexPositionUVNormal> PercyVertices;
+		std::vector<unsigned int> PercyIndices;
+		char * ItsAllOgreNow = "Assets/CHARACTER_Shrek.obj";//AsfStafy00.obj";
+		LoadObjectNoNormal(ItsAllOgreNow, PercyVertices, PercyIndices);
+
+		D3D11_SAMPLER_DESC SamDesc;
+		ZeroMemory(&SamDesc, sizeof(SamDesc));
+		SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&SamDesc, &m_PercySamplerState));
+		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/shrek.dds", NULL, &m_PercyResouceView));
+
+		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
+		vertexBufferData.pSysMem = PercyVertices.data();
+		vertexBufferData.SysMemPitch = 0;
+		vertexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(VertexPositionUVNormal) * PercyVertices.size(), D3D11_BIND_VERTEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &m_PercyvertexBuffer));
+
+
+		m_PercyindexCount = PercyIndices.size();
+
+		D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
+		indexBufferData.pSysMem = PercyIndices.data();
+		indexBufferData.SysMemPitch = 0;
+		indexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(unsigned int) * PercyIndices.size(), D3D11_BIND_INDEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_PercyindexBuffer));
+	});
+#pragma endregion
+
+#pragma region Cube
 	// Once both shaders are loaded, create the mesh.
 	auto createCubeTask = (createPSTask && createVSTask).then([this]()
 	{
@@ -313,7 +486,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cubeIndices), D3D11_BIND_INDEX_BUFFER);
 		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_indexBuffer));
 	});
-
+#pragma endregion
 	// Once the cube is loaded, the object is ready to be rendered.
 	createCubeTask.then([this]()
 	{
@@ -331,35 +504,135 @@ void Sample3DSceneRenderer::ReleaseDeviceDependentResources(void)
 	m_vertexBuffer.Reset();
 	m_indexBuffer.Reset();
 }
+
+#pragma region Loaders 
+
 #pragma warning(disable:4996)  
-bool Sample3DSceneRenderer::LoadObject(const char* _path, std::vector<VertexPositionUVNormal> &toload) {
-	
-	FILE * file = fopen(_path, "r"); 
-	if (file == NULL) {
-		printf("Impossible to open the file !\n");
-		return false;
-	}
-	while (true)
+void DX11UWA::Sample3DSceneRenderer::LoadObject(char * lePath, std::vector<VertexPositionUVNormal>& leVertexs, std::vector<unsigned int>& leIndices)
+{
+	std::vector<XMFLOAT3> leVertices;
+	std::vector<XMFLOAT3> leUVs;
+	std::vector<XMFLOAT3> leNormals;
+	std::vector<unsigned int> leVIndices;
+	std::vector<unsigned int> leUVIndices;
+	std::vector<unsigned int> leNIndices;
+	float levertexIndex, leuvIndex, lenormalIndex, levertexIndex1, leuvIndex1, lenormalIndex1, levertexIndex2, leuvIndex2, lenormalIndex2 = 0;
+	char leBuffer[148];
+
+	std::FILE * leFile = std::fopen(lePath, "r");
+
+	while (!std::feof(leFile))
 	{
-		char lineHeader[128];
-		int res = fscanf(file, "%s", lineHeader);
-		if (res == EOF)
+		std::fscanf(leFile, "%s", leBuffer);
+
+		if (std::strcmp(leBuffer, "v") == 0)
 		{
-			break;
+			XMFLOAT3 leVertex;
+			fscanf(leFile, "%f %f %f\n", &leVertex.x, &leVertex.y, &leVertex.z);
+			leVertices.push_back(leVertex);
 		}
-
-		if (strcmp(lineHeader, "v") == 0) {
-
-			fscanf(file, "%f %f %f\n",&toload.pos.x,&toload.pos.y,&toload.pos.x); // load the adress of xyz
+		else if (std::strcmp(leBuffer, "vt") == 0)
+		{
+			XMFLOAT3 leUV;
+			fscanf(leFile, "%f %f\n", &leUV.x, &leUV.y);
+			leUV.y = 1 - leUV.y;
+			leUV.z = 1;
+			leUVs.push_back(leUV);
 		}
-		else if (strcmp(lineHeader, "vt") == 0) {
-
-			fscanf(file, "%f %f\n", &toload.uv.x, &toload.uv.y); //load the adress of u and v
+		else if (std::strcmp(leBuffer, "vn") == 0)
+		{
+			XMFLOAT3 leNormal;
+			fscanf(leFile, "%f %f %f\n", &leNormal.x, &leNormal.y, &leNormal.z);
+			leNormals.push_back(leNormal);
 		}
-		else if (strcmp(lineHeader, "vn") == 0) {
-			fscanf(file, "%f %f %f\n", &toload.normal.x, &toload.normal.y, &toload.normal.z); //load the adress of the uvs
+		else if (std::strcmp(leBuffer, "f") == 0)
+		{
+			fscanf(leFile, "%f/%f/%f %f/%f/%f %f/%f/%f\n", &levertexIndex, &leuvIndex, &lenormalIndex, &levertexIndex1, &leuvIndex1, &lenormalIndex1, &levertexIndex2, &leuvIndex2, &lenormalIndex2);
+
+			leVIndices.push_back(levertexIndex);
+			leVIndices.push_back(levertexIndex1);
+			leVIndices.push_back(levertexIndex2);
+			leUVIndices.push_back(leuvIndex);
+			leUVIndices.push_back(leuvIndex1);
+			leUVIndices.push_back(leuvIndex2);
+			leNIndices.push_back(lenormalIndex);
+			leNIndices.push_back(lenormalIndex1);
+			leNIndices.push_back(lenormalIndex2);
 		}
 	}
 
-	return true;
+	for (int i = 0; i < leVIndices.size(); i++)
+	{
+		VertexPositionUVNormal temp;
+		temp.pos = leVertices[leVIndices[i] - 1];
+		temp.uv = leUVs[leUVIndices[i] - 1];
+		temp.normal = leNormals[leNIndices[i] - 1];
+
+		leVertexs.push_back(temp);
+		leIndices.push_back(i);
+	}
 }
+
+void DX11UWA::Sample3DSceneRenderer::LoadObjectNoNormal(char * lePath, std::vector<VertexPositionUVNormal>& leVertexs, std::vector<unsigned int>& leIndices)
+{
+	std::vector<XMFLOAT3> leVertices;
+	std::vector<XMFLOAT3> leUVs;
+	std::vector<XMFLOAT3> leNormals;
+	std::vector<unsigned int> leVIndices;
+	std::vector<unsigned int> leUVIndices;
+	std::vector<unsigned int> leNIndices;
+	float levertexIndex, leuvIndex, lenormalIndex, levertexIndex1, leuvIndex1, lenormalIndex1, levertexIndex2, leuvIndex2, lenormalIndex2 = 0;
+	char leBuffer[148];
+
+	std::FILE * leFile = std::fopen(lePath, "r");
+
+	while (!std::feof(leFile))
+	{
+		std::fscanf(leFile, "%s", leBuffer);
+
+		if (std::strcmp(leBuffer, "v") == 0)
+		{
+			XMFLOAT3 leVertex;
+			fscanf(leFile, "%f %f %f\n", &leVertex.x, &leVertex.y, &leVertex.z);
+			leVertices.push_back(leVertex);
+		}
+		else if (std::strcmp(leBuffer, "vt") == 0)
+		{
+			XMFLOAT3 leUV;
+			fscanf(leFile, "%f %f\n", &leUV.x, &leUV.y);
+			leUV.y = 1 - leUV.y;
+			leUV.z = 1;
+			leUVs.push_back(leUV);
+		}
+		else if (std::strcmp(leBuffer, "vn") == 0)
+		{
+			XMFLOAT3 leNormal;
+			fscanf(leFile, "%f %f %f\n", &leNormal.x, &leNormal.y, &leNormal.z);
+			leNormals.push_back(leNormal);
+		}
+		else if (std::strcmp(leBuffer, "f") == 0)
+		{
+			fscanf(leFile, "%f/%f %f/%f %f/%f\n", &levertexIndex, &leuvIndex, &levertexIndex1, &leuvIndex1, &levertexIndex2, &leuvIndex2);
+
+			leVIndices.push_back(levertexIndex);
+			leVIndices.push_back(levertexIndex1);
+			leVIndices.push_back(levertexIndex2);
+			leUVIndices.push_back(leuvIndex);
+			leUVIndices.push_back(leuvIndex1);
+			leUVIndices.push_back(leuvIndex2);
+		}
+	}
+
+	for (int i = 0; i < leVIndices.size(); i++)
+	{
+		VertexPositionUVNormal temp;
+		temp.pos = leVertices[leVIndices[i] - 1];
+		temp.uv = leUVs[leUVIndices[i] - 1];
+		temp.normal = XMFLOAT3{ 1.0f, 1.0f, 1.0f };
+
+		leVertexs.push_back(temp);
+		leIndices.push_back(i);
+	}
+}
+
+#pragma endregion

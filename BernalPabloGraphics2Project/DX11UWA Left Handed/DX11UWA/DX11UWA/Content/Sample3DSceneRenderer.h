@@ -1,9 +1,10 @@
 ﻿
 #pragma once
-
+#include <vector>
 #include "..\Common\DeviceResources.h"
 #include "ShaderStructures.h"
 #include "..\Common\StepTimer.h"
+#include "Common\DDSTextureLoader.h"
 
 
 namespace DX11UWA
@@ -23,7 +24,8 @@ namespace DX11UWA
 		void TrackingUpdate(float positionX);
 		void StopTracking(void);
 		inline bool IsTracking(void) { return m_tracking; }
-		bool LoadObject(const char* _path,std::vector<VertexPositionUVNormal> &toload);
+		void LoadObject(char * lePath, std::vector<VertexPositionUVNormal>& leVertexs, std::vector<unsigned int>& leIndices);
+		void LoadObjectNoNormal(char * lePath, std::vector<VertexPositionUVNormal>& leVertexs, std::vector<unsigned int>& leIndices);
 
 		// Helper functions for keyboard and mouse input
 		void SetKeyboardButtons(const char* list);
@@ -47,9 +49,60 @@ namespace DX11UWA
 		Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_pixelShader;
 		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_constantBuffer;
 
+
+
+		// Direct3D resources for cube geometry.
+		Microsoft::WRL::ComPtr<ID3D11InputLayout>	m_RTCinputLayout;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_RTCvertexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_RTCindexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_RTCvertexShader;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_RTCpixelShader;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_RTCconstantBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D>       m_RTCRenderTargetTextureMap;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView>   m_RTCRenderTargetView;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_RTCSRV;
+		DirectX::XMMATRIX                                 m_RTCTextureView;
+		DirectX::XMMATRIX                                 m_RTCTextureProjection;
+
+		Microsoft::WRL::ComPtr<ID3D11SamplerState>       m_RTCTexSampleState;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_RTCTexResourceView;
+
+		//Kirby
+		Microsoft::WRL::ComPtr<ID3D11InputLayout>	m_ShrekinputLayout;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_ShrekvertexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_ShrekindexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_ShrekvertexShader;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_ShrekpixelShader;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_ShrekconstantBuffer;
+		Microsoft::WRL::ComPtr<ID3D11SamplerState>  m_ShrekSamplerState;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_ShrekResouceView;
+
+		//Percy
+		Microsoft::WRL::ComPtr<ID3D11InputLayout>	m_PercyinputLayout;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_PercyvertexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_PercyindexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_PercyvertexShader;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_PercypixelShader;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_PercyconstantBuffer;
+		Microsoft::WRL::ComPtr<ID3D11SamplerState>  m_PercySamplerState;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_PercyResouceView;
+
 		// System resources for cube geometry.
 		ModelViewProjectionConstantBuffer	m_constantBufferData;
 		uint32	m_indexCount;
+
+		// System resources for cube geometry.
+		ModelViewProjectionConstantBuffer	m_RTCconstantBufferData;
+		uint32	m_RTCindexCount;
+
+
+		//Shrek
+		ModelViewProjectionConstantBuffer	m_ShrekconstantBufferData;
+		uint32	m_ShrekindexCount;
+
+		//Percy
+		ModelViewProjectionConstantBuffer	m_PercyconstantBufferData;
+		uint32	m_PercyindexCount;
 
 		// Variables used with the rendering loop.
 		bool	m_loadingComplete;
