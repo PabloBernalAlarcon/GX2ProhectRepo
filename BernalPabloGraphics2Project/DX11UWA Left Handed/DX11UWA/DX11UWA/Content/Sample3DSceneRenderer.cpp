@@ -95,6 +95,9 @@ void Sample3DSceneRenderer::Rotate(float radians)
 {
 	// Prepare to pass the updated model matrix to the shader
 	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
+
+	XMStoreFloat4x4(&m_PercyconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
+
 }
 
 void Sample3DSceneRenderer::UpdateCamera(DX::StepTimer const& timer, float const moveSpd, float const rotSpd)
@@ -103,42 +106,43 @@ void Sample3DSceneRenderer::UpdateCamera(DX::StepTimer const& timer, float const
 
 	if (m_kbuttons['W'])
 	{
-		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, moveSpd * delta_time);
+		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, moveSpd * delta_time*5);
 		XMMATRIX temp_camera = XMLoadFloat4x4(&m_camera);
 		XMMATRIX result = XMMatrixMultiply(translation, temp_camera);
 		XMStoreFloat4x4(&m_camera, result);
+		
 	}
 	if (m_kbuttons['S'])
 	{
-		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, -moveSpd * delta_time);
+		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, -moveSpd * delta_time*5);
 		XMMATRIX temp_camera = XMLoadFloat4x4(&m_camera);
 		XMMATRIX result = XMMatrixMultiply(translation, temp_camera);
 		XMStoreFloat4x4(&m_camera, result);
 	}
 	if (m_kbuttons['A'])
 	{
-		XMMATRIX translation = XMMatrixTranslation(-moveSpd * delta_time, 0.0f, 0.0f);
+		XMMATRIX translation = XMMatrixTranslation(-moveSpd * delta_time, 0.0f, 0.0f*10);
 		XMMATRIX temp_camera = XMLoadFloat4x4(&m_camera);
 		XMMATRIX result = XMMatrixMultiply(translation, temp_camera);
 		XMStoreFloat4x4(&m_camera, result);
 	}
 	if (m_kbuttons['D'])
 	{
-		XMMATRIX translation = XMMatrixTranslation(moveSpd * delta_time, 0.0f, 0.0f);
+		XMMATRIX translation = XMMatrixTranslation(moveSpd * delta_time, 0.0f, 0.0f*10);
 		XMMATRIX temp_camera = XMLoadFloat4x4(&m_camera);
 		XMMATRIX result = XMMatrixMultiply(translation, temp_camera);
 		XMStoreFloat4x4(&m_camera, result);
 	}
 	if (m_kbuttons['X'])
 	{
-		XMMATRIX translation = XMMatrixTranslation( 0.0f, -moveSpd * delta_time, 0.0f);
+		XMMATRIX translation = XMMatrixTranslation( 0.0f, -moveSpd * delta_time, 0.0f*10);
 		XMMATRIX temp_camera = XMLoadFloat4x4(&m_camera);
 		XMMATRIX result = XMMatrixMultiply(translation, temp_camera);
 		XMStoreFloat4x4(&m_camera, result);
 	}
 	if (m_kbuttons[VK_SPACE])
 	{
-		XMMATRIX translation = XMMatrixTranslation( 0.0f, moveSpd * delta_time, 0.0f);
+		XMMATRIX translation = XMMatrixTranslation( 0.0f, moveSpd * delta_time, 0.0f*10);
 		XMMATRIX temp_camera = XMLoadFloat4x4(&m_camera);
 		XMMATRIX result = XMMatrixMultiply(translation, temp_camera);
 		XMStoreFloat4x4(&m_camera, result);
@@ -228,6 +232,8 @@ void Sample3DSceneRenderer::Render(void)
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_camera))));
 
 #pragma region DrawtheCube
+	m_constantBufferData.model._24 = 0.7f;
+	m_constantBufferData.model._34 = -3.0f;
 	// Prepare the constant buffer to send it to the graphics device.
 	context->UpdateSubresource1(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0, 0);
 	// Each vertex is one instance of the VertexPositionColor struct.
@@ -249,8 +255,8 @@ void Sample3DSceneRenderer::Render(void)
 #pragma endregion
 
 
-
 #pragma region DrawKriby
+
 	context->UpdateSubresource1(m_ShrekconstantBuffer.Get(), 0, NULL, &m_ShrekconstantBufferData, 0, 0, 0);
 	stride = sizeof(VertexPositionUVNormal);
 	offset = 0;
@@ -263,10 +269,12 @@ void Sample3DSceneRenderer::Render(void)
 	context->PSSetShader(m_ShrekpixelShader.Get(), nullptr, 0);
 	context->PSSetShaderResources(0, 1, m_ShrekResouceView.GetAddressOf());
 	context->PSSetSamplers(0, 1, m_ShrekSamplerState.GetAddressOf());
-	//context->DrawIndexed(m_ShrekindexCount, 0, 0);
+	context->DrawIndexed(m_ShrekindexCount, 0, 0);
 #pragma endregion
 
 #pragma region DrawPercy
+	m_PercyconstantBufferData.model._24 = 1.5f;
+	m_PercyconstantBufferData.model._34 = 2.0f;
 	context->UpdateSubresource1(m_PercyconstantBuffer.Get(), 0, NULL, &m_PercyconstantBufferData, 0, 0, 0);
 	stride = sizeof(VertexPositionUVNormal);
 	offset = 0;
@@ -344,7 +352,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 	{
 		std::vector<VertexPositionUVNormal> ShrekVertices;
 		std::vector<unsigned int> ShrekIndices;
-		char * ItsAllOgreNow = "Assets/ballkirby.obj";
+		char * ItsAllOgreNow = "Assets/course_model_new.obj";
 		LoadObject(ItsAllOgreNow, ShrekVertices, ShrekIndices);
 
 		D3D11_SAMPLER_DESC SamDesc;
@@ -355,7 +363,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
 		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&SamDesc, &m_ShrekSamplerState));
-		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/Kirby.dds", NULL, &m_ShrekResouceView));
+		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/zara.dds", NULL, &m_ShrekResouceView));
 	
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 		vertexBufferData.pSysMem = ShrekVertices.data();
@@ -408,8 +416,8 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 	{
 		std::vector<VertexPositionUVNormal> PercyVertices;
 		std::vector<unsigned int> PercyIndices;
-		char * ItsAllOgreNow = "Assets/CHARACTER_Shrek.obj";//AsfStafy00.obj";
-		LoadObjectNoNormal(ItsAllOgreNow, PercyVertices, PercyIndices);
+		char * ItsAllOgreNow = "Assets/AsfStafy00.obj";//AsfStafy00.obj";
+		LoadObject(ItsAllOgreNow, PercyVertices, PercyIndices);
 
 		D3D11_SAMPLER_DESC SamDesc;
 		ZeroMemory(&SamDesc, sizeof(SamDesc));
@@ -419,7 +427,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
 		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&SamDesc, &m_PercySamplerState));
-		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/shrek.dds", NULL, &m_PercyResouceView));
+		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/stafy_01.dds", NULL, &m_PercyResouceView));
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 		vertexBufferData.pSysMem = PercyVertices.data();

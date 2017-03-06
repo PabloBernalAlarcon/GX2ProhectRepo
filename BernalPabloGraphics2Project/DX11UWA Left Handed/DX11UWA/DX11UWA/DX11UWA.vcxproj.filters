@@ -125,6 +125,9 @@
     <Image Include="Assets\shrek.dds">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\zara.dds">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -144,6 +147,9 @@
       <Filter>Assets</Filter>
     </None>
     <None Include="Assets\AsfStafy00.obj">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\course_model_new.obj">
       <Filter>Assets</Filter>
     </None>
   </ItemGroup>

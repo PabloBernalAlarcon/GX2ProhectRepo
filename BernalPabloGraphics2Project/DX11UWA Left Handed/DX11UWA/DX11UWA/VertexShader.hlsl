@@ -17,6 +17,7 @@ struct VertexShaderInput
 struct PixelShaderInput
 {
 	float4 pos : SV_POSITION;
+	float3 WorldPos : W_POSITION;
 	float3 uv : UV;
 	float3 normals : NORMAL;
 };
@@ -28,11 +29,13 @@ PixelShaderInput main(VertexShaderInput input)
 	float4 pos = float4(input.pos, 1.0f);
 
 	// Transform the vertex position into projected space.
+	output.WorldPos = pos.xyz;
 	pos = mul(pos, model);
 	pos = mul(pos, view);
 	pos = mul(pos, projection);
 	output.pos = pos;
-	output.normals = input.normals;
+	
+	output.normals = normalize(mul(float4(input.normals, 0.0f),model));
 
 	// Pass the color through without modification.
 	output.uv = input.uv;
