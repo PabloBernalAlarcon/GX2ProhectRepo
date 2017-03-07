@@ -56,8 +56,8 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(void)
 	XMStoreFloat4x4(&m_constantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
 
 	// Eye is at (0,0.7,1.5), looking at point (0,-0.1,0) with the up-vector along the y-axis.
-	static const XMVECTORF32 eye = { 0.0f, 3.0f, -10.0f, 0.0f };
-	static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
+	static const XMVECTORF32 eye = { 0.0f, 3.0f, -15.0f, 0.0f };
+	static const XMVECTORF32 at = { 0.0f, 2.0f, 0.0f, 0.0f };
 	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
 	XMStoreFloat4x4(&m_camera, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up)));
@@ -81,14 +81,23 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 	// Update or move camera here
 	UpdateCamera(timer, 5.0f, 0.75f);
 
-	m_ShrekconstantBufferData = m_constantBufferData;
-	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14159f)));
+	XMFLOAT4X4 yee(1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
 
-	m_PercyconstantBufferData = m_constantBufferData;
-	XMStoreFloat4x4(&m_PercyconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14159f)));
+	m_ShrekconstantBufferData.model = yee;
+	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14f)));
+	m_ShrekconstantBufferData.projection = m_constantBufferData.projection;
+	m_ShrekconstantBufferData.view = m_constantBufferData.view;
 
-	m_JynxconstantBufferData = m_constantBufferData;
-	XMStoreFloat4x4(&m_JynxconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14159f)));
+	
+	//m_PercyconstantBufferData.model = yee;
+	m_PercyconstantBufferData.projection = m_constantBufferData.projection;
+	m_PercyconstantBufferData.view = m_constantBufferData.view;
+
+	m_JynxconstantBufferData.projection = m_constantBufferData.projection;
+	m_JynxconstantBufferData.view = m_constantBufferData.view;
 
 }
 
@@ -101,14 +110,14 @@ void Sample3DSceneRenderer::Rotate(float radians)
 	//XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixMultiply(XMMatrixIdentity(),XMMatrixTranspose(XMMatrixRotationY(radians))));
 
 
-	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
+	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixRotationX(radians)));
 
+	XMStoreFloat4x4(&m_JynxconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(-radians)));
 
-	/*XMMATRIX modelPos = XMMatrixTranspose(XMMatrixTranslation(5, 0, 5));
-	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixMultiply(modelPos, XMMatrixTranspose(XMMatrixRotationY(radians))));
-	XMMATRIX modelWorld = XMLoadFloat4x4(&m_ShrekconstantBufferData.model);
-	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixMultiply(XMMatrixTranspose(XMMatrixRotationY(radians)), modelWorld));*/
-
+	XMMATRIX modelPos = XMMatrixTranspose(XMMatrixTranslation(5, 0, 0));
+	XMStoreFloat4x4(&m_PercyconstantBufferData.model, XMMatrixMultiply(modelPos, XMMatrixTranspose(XMMatrixRotationY(radians*10.0f))));
+	XMMATRIX modelWorld = XMLoadFloat4x4(&m_PercyconstantBufferData.model);
+	XMStoreFloat4x4(&m_PercyconstantBufferData.model, XMMatrixMultiply(XMMatrixTranspose(XMMatrixRotationY(radians)), modelWorld));
 	
 
 }
@@ -288,7 +297,7 @@ void Sample3DSceneRenderer::Render(void)
 #pragma endregion
 
 #pragma region DrawPercy
-	m_PercyconstantBufferData.model._24 = 1.5f;
+	m_PercyconstantBufferData.model._24 = 6.5f;
 	m_PercyconstantBufferData.model._34 = 2.0f;
 	context->UpdateSubresource1(m_PercyconstantBuffer.Get(), 0, NULL, &m_PercyconstantBufferData, 0, 0, 0);
 	stride = sizeof(VertexPositionUVNormal);
@@ -309,8 +318,7 @@ void Sample3DSceneRenderer::Render(void)
 #pragma region DrawJynx
 
 
-	m_JynxconstantBufferData.model._24 = 0.0f;
-	m_JynxconstantBufferData.model._34 = -5.0f;
+	m_JynxconstantBufferData.model._34 = -4.0f;
 	context->UpdateSubresource1(m_JynxconstantBuffer.Get(), 0, NULL, &m_JynxconstantBufferData, 0, 0, 0);
 	stride = sizeof(VertexPositionUVNormal);
 	offset = 0;

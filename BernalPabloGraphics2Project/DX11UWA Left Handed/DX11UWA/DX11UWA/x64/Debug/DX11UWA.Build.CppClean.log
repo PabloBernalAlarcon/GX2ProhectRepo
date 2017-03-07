@@ -3,11 +3,11 @@ c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left h
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\vc140.idb
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\pch.obj
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\dx11uwamain.obj
-c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\sample3dscenerenderer.obj
-c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\app.obj
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\ddstextureloader.obj
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\samplefpstextrenderer.obj
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\deviceresources.obj
+c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\sample3dscenerenderer.obj
+c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\app.obj
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\x64\debug\dx11uwa\samplepixelshader.cso
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\x64\debug\dx11uwa\samplevertexshader.cso
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\x64\debug\dx11uwa\pixelshader.cso
@@ -30,11 +30,8 @@ c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left h
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\projectarchitectures.txt
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\x64\debug\dx11uwa\appxmanifest.xml
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\x64\debug\dx11uwa\dx11uwa.build.appxrecipe
-c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\dx11uwa.vcxprojresolveassemblyreference.cache
-c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\x64\debug\dx11uwa\dx11uwa.ilk
-c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\x64\debug\dx11uwa\dx11uwa.exe
-c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\x64\debug\dx11uwa\dx11uwa.pdb
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\embed.resfiles
+c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\x64\debug\dx11uwa\dx11uwa.pdb
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\dx11uwa.tlog\cl.command.1.tlog
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\dx11uwa.tlog\cl.read.1.tlog
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\x64\debug\dx11uwa.tlog\cl.write.1.tlog
