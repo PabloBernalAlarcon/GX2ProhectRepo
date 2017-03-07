@@ -87,6 +87,15 @@ namespace DX11UWA
 		Microsoft::WRL::ComPtr<ID3D11SamplerState>  m_PercySamplerState;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_PercyResouceView;
 
+		//Jynx
+		Microsoft::WRL::ComPtr<ID3D11InputLayout>	m_JynxinputLayout;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_JynxvertexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_JynxindexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_JynxvertexShader;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_JynxpixelShader;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_JynxconstantBuffer;
+		Microsoft::WRL::ComPtr<ID3D11SamplerState>  m_JynxSamplerState;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_JynxResouceView;
 		// System resources for cube geometry.
 		ModelViewProjectionConstantBuffer	m_constantBufferData;
 		uint32	m_indexCount;
@@ -103,6 +112,10 @@ namespace DX11UWA
 		//Percy
 		ModelViewProjectionConstantBuffer	m_PercyconstantBufferData;
 		uint32	m_PercyindexCount;
+
+		//Percy
+		ModelViewProjectionConstantBuffer	m_JynxconstantBufferData;
+		uint32	m_JynxindexCount;
 
 		// Variables used with the rendering loop.
 		bool	m_loadingComplete;

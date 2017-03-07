@@ -131,6 +131,9 @@
     <Image Include="Assets\lanky.dds">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\jynx.dds">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -153,6 +156,9 @@
       <Filter>Assets</Filter>
     </None>
     <None Include="Assets\lanky.obj">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\jynx.obj">
       <Filter>Assets</Filter>
     </None>
   </ItemGroup>

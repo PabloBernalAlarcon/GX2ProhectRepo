@@ -28,6 +28,9 @@
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.winmd">
       <PackagePath>DX11UWA.winmd</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\jynx.dds">
+      <PackagePath>Assets\jynx.dds</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\Kirby.dds">
       <PackagePath>Assets\Kirby.dds</PackagePath>
     </AppxPackagedFile>
@@ -99,6 +102,9 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\lanky.obj">
       <PackagePath>Assets\lanky.obj</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\jynx.obj">
+      <PackagePath>Assets\jynx.obj</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\SamplePixelShader.cso">
       <PackagePath>SamplePixelShader.cso</PackagePath>

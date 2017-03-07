@@ -56,7 +56,7 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(void)
 	XMStoreFloat4x4(&m_constantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
 
 	// Eye is at (0,0.7,1.5), looking at point (0,-0.1,0) with the up-vector along the y-axis.
-	static const XMVECTORF32 eye = { 0.0f, 0.7f, -1.5f, 0.0f };
+	static const XMVECTORF32 eye = { 0.0f, 3.0f, -10.0f, 0.0f };
 	static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
 	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
@@ -79,13 +79,16 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 
 
 	// Update or move camera here
-	UpdateCamera(timer, 1.0f, 0.75f);
+	UpdateCamera(timer, 5.0f, 0.75f);
 
 	m_ShrekconstantBufferData = m_constantBufferData;
 	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14159f)));
 
 	m_PercyconstantBufferData = m_constantBufferData;
 	XMStoreFloat4x4(&m_PercyconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14159f)));
+
+	m_JynxconstantBufferData = m_constantBufferData;
+	XMStoreFloat4x4(&m_JynxconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14159f)));
 
 }
 
@@ -94,8 +97,17 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 void Sample3DSceneRenderer::Rotate(float radians)
 {
 	// Prepare to pass the updated model matrix to the shader
-	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
+	//XMMATRIX whatever = XMLoadFloat4x4(&m_ShrekconstantBufferData.model);
+	//XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixMultiply(XMMatrixIdentity(),XMMatrixTranspose(XMMatrixRotationY(radians))));
+
+
 	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
+
+
+	/*XMMATRIX modelPos = XMMatrixTranspose(XMMatrixTranslation(5, 0, 5));
+	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixMultiply(modelPos, XMMatrixTranspose(XMMatrixRotationY(radians))));
+	XMMATRIX modelWorld = XMLoadFloat4x4(&m_ShrekconstantBufferData.model);
+	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixMultiply(XMMatrixTranspose(XMMatrixRotationY(radians)), modelWorld));*/
 
 	
 
@@ -107,7 +119,7 @@ void Sample3DSceneRenderer::UpdateCamera(DX::StepTimer const& timer, float const
 
 	if (m_kbuttons['W'])
 	{
-		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, moveSpd * delta_time*5);
+		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, moveSpd * delta_time);
 		XMMATRIX temp_camera = XMLoadFloat4x4(&m_camera);
 		XMMATRIX result = XMMatrixMultiply(translation, temp_camera);
 		XMStoreFloat4x4(&m_camera, result);
@@ -115,28 +127,28 @@ void Sample3DSceneRenderer::UpdateCamera(DX::StepTimer const& timer, float const
 	}
 	if (m_kbuttons['S'])
 	{
-		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, -moveSpd * delta_time*5);
+		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, -moveSpd * delta_time);
 		XMMATRIX temp_camera = XMLoadFloat4x4(&m_camera);
 		XMMATRIX result = XMMatrixMultiply(translation, temp_camera);
 		XMStoreFloat4x4(&m_camera, result);
 	}
 	if (m_kbuttons['A'])
 	{
-		XMMATRIX translation = XMMatrixTranslation(-moveSpd * delta_time, 0.0f, 0.0f*10);
+		XMMATRIX translation = XMMatrixTranslation(-moveSpd * delta_time, 0.0f, 0.0f);
 		XMMATRIX temp_camera = XMLoadFloat4x4(&m_camera);
 		XMMATRIX result = XMMatrixMultiply(translation, temp_camera);
 		XMStoreFloat4x4(&m_camera, result);
 	}
 	if (m_kbuttons['D'])
 	{
-		XMMATRIX translation = XMMatrixTranslation(moveSpd * delta_time, 0.0f, 0.0f*10);
+		XMMATRIX translation = XMMatrixTranslation(moveSpd * delta_time, 0.0f, 0.0f);
 		XMMATRIX temp_camera = XMLoadFloat4x4(&m_camera);
 		XMMATRIX result = XMMatrixMultiply(translation, temp_camera);
 		XMStoreFloat4x4(&m_camera, result);
 	}
 	if (m_kbuttons['X'])
 	{
-		XMMATRIX translation = XMMatrixTranslation( 0.0f, -moveSpd * delta_time, 0.0f*10);
+		XMMATRIX translation = XMMatrixTranslation( 0.0f, -moveSpd * delta_time, 0.0f);
 		XMMATRIX temp_camera = XMLoadFloat4x4(&m_camera);
 		XMMATRIX result = XMMatrixMultiply(translation, temp_camera);
 		XMStoreFloat4x4(&m_camera, result);
@@ -233,8 +245,9 @@ void Sample3DSceneRenderer::Render(void)
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_camera))));
 
 #pragma region DrawtheCube
-	m_constantBufferData.model._24 = 0.7f;
-	m_constantBufferData.model._34 = -3.0f;
+	m_constantBufferData.model._14 = 0.0f;
+	m_constantBufferData.model._24 = 6.0f;
+	m_constantBufferData.model._34 = -8.0f;
 	// Prepare the constant buffer to send it to the graphics device.
 	context->UpdateSubresource1(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0, 0);
 	// Each vertex is one instance of the VertexPositionColor struct.
@@ -257,6 +270,7 @@ void Sample3DSceneRenderer::Render(void)
 
 
 #pragma region DrawKriby
+
 
 	context->UpdateSubresource1(m_ShrekconstantBuffer.Get(), 0, NULL, &m_ShrekconstantBufferData, 0, 0, 0);
 	stride = sizeof(VertexPositionUVNormal);
@@ -290,6 +304,26 @@ void Sample3DSceneRenderer::Render(void)
 	context->PSSetSamplers(0, 1, m_PercySamplerState.GetAddressOf());
 	context->DrawIndexed(m_PercyindexCount, 0, 0);
 
+#pragma endregion
+
+#pragma region DrawJynx
+
+
+	m_JynxconstantBufferData.model._24 = 0.0f;
+	m_JynxconstantBufferData.model._34 = -5.0f;
+	context->UpdateSubresource1(m_JynxconstantBuffer.Get(), 0, NULL, &m_JynxconstantBufferData, 0, 0, 0);
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_JynxvertexBuffer.GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(m_JynxindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_JynxinputLayout.Get());
+	context->VSSetShader(m_JynxvertexShader.Get(), nullptr, 0);
+	context->VSSetConstantBuffers1(0, 1, m_JynxconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	context->PSSetShader(m_JynxpixelShader.Get(), nullptr, 0);
+	context->PSSetShaderResources(0, 1, m_JynxResouceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_JynxSamplerState.GetAddressOf());
+	context->DrawIndexed(m_JynxindexCount, 0, 0);
 #pragma endregion
 }
 
@@ -449,6 +483,71 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 	});
 #pragma endregion
 
+
+#pragma region JynxShit
+
+	//Shrek Shit
+	loadVSTask = DX::ReadDataAsync(L"VertexShader.cso");
+	loadPSTask = DX::ReadDataAsync(L"PixelShader.cso");
+
+	auto createJynxVSTask = loadVSTask.then([this](const std::vector<byte>& fileData)
+	{
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateVertexShader(&fileData[0], fileData.size(), nullptr, &m_JynxvertexShader));
+
+		static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "UV", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateInputLayout(vertexDesc, ARRAYSIZE(vertexDesc), &fileData[0], fileData.size(), &m_JynxinputLayout));
+	});
+
+	auto createJynxPSTask = loadPSTask.then([this](const std::vector<byte>& fileData)
+	{
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreatePixelShader(&fileData[0], fileData.size(), nullptr, &m_JynxpixelShader));
+
+		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&constantBufferDesc, nullptr, &m_JynxconstantBuffer));
+	});
+
+	auto createJynxTask = (createJynxPSTask && createJynxVSTask).then([this]()
+	{
+		std::vector<VertexPositionUVNormal> JynxVertices;
+		std::vector<unsigned int> JynxIndices;
+		char * ItsAllOgreNow = "Assets/jynx.obj";
+		LoadObject(ItsAllOgreNow, JynxVertices, JynxIndices);
+
+		D3D11_SAMPLER_DESC SamDesc;
+		ZeroMemory(&SamDesc, sizeof(SamDesc));
+		SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&SamDesc, &m_JynxSamplerState));
+		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/jynx.dds", NULL, &m_JynxResouceView));
+
+		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
+		vertexBufferData.pSysMem = JynxVertices.data();
+		vertexBufferData.SysMemPitch = 0;
+		vertexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(VertexPositionUVNormal) * JynxVertices.size(), D3D11_BIND_VERTEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &m_JynxvertexBuffer));
+
+
+		m_JynxindexCount = JynxIndices.size();
+
+		D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
+		indexBufferData.pSysMem = JynxIndices.data();
+		indexBufferData.SysMemPitch = 0;
+		indexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(unsigned int) * JynxIndices.size(), D3D11_BIND_INDEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_JynxindexBuffer));
+	});
+
+#pragma endregion
 #pragma region Cube
 	// Once both shaders are loaded, create the mesh.
 	auto createCubeTask = (createPSTask && createVSTask).then([this]()

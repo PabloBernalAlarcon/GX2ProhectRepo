@@ -31,20 +31,6 @@ float4 PL(PixelShaderInput input) {
 	float4 result = float4(Color, 1.0f)*lightratio*atenuation;
 	return result;
 
-	/*float3 lightpos;
-	float radius = 13.50f;
-
-	lightpos.x = 10.0f - input.WorldPos.x;
-	lightpos.y = 10.0f - input.WorldPos.y;
-	lightpos.z = 0.0f - input.WorldPos.z;
-
-	float mag = sqrt(lightpos.xlightpos.x + lightpos.ylightpos.y + lightpos.zlightpos.z);
-	float3 direction = normalize(lightpos);
-	float ratio = clamp(dot(-normalize(direction), normalize(input.normal)), 0.0f, 1.0f);
-	float att = 1.0f - clamp(mag / radius, 0.0f, 1.0f);
-	float3 clr = { 0.0f,1.0f,0.0f };
-	float4 ReturnThis = float4(clr, 1.0f)ratio*att;
-	return ReturnThis;*/
 }
 
 float4 SL(PixelShaderInput input)
