@@ -94,9 +94,10 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 void Sample3DSceneRenderer::Rotate(float radians)
 {
 	// Prepare to pass the updated model matrix to the shader
+	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
 	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
 
-	XMStoreFloat4x4(&m_PercyconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
+	
 
 }
 
@@ -416,7 +417,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 	{
 		std::vector<VertexPositionUVNormal> PercyVertices;
 		std::vector<unsigned int> PercyIndices;
-		char * ItsAllOgreNow = "Assets/AsfStafy00.obj";//AsfStafy00.obj";
+		char * ItsAllOgreNow = "Assets/lanky.obj";//AsfStafy00.obj";
 		LoadObject(ItsAllOgreNow, PercyVertices, PercyIndices);
 
 		D3D11_SAMPLER_DESC SamDesc;
@@ -427,7 +428,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
 		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&SamDesc, &m_PercySamplerState));
-		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/stafy_01.dds", NULL, &m_PercyResouceView));
+		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/lanky.dds", NULL, &m_PercyResouceView));
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 		vertexBufferData.pSysMem = PercyVertices.data();

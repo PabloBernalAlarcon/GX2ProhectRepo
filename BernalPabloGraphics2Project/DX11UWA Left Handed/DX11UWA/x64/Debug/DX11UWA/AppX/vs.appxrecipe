@@ -27,21 +27,25 @@
     <AppXManifest Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-03-06T06:26:35.424</Modified>
+      <Modified>2017-03-07T18:28:10.859</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.exe">
       <PackagePath>DX11UWA.exe</PackagePath>
-      <Modified>2017-03-06T06:55:54.593</Modified>
+      <Modified>2017-03-07T18:28:10.514</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.winmd">
       <PackagePath>DX11UWA.winmd</PackagePath>
-      <Modified>2017-03-04T04:51:57.230</Modified>
+      <Modified>2017-03-07T02:59:38.371</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\Kirby.dds">
       <PackagePath>Assets\Kirby.dds</PackagePath>
       <Modified>2017-03-03T05:56:19.043</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\lanky.dds">
+      <PackagePath>Assets\lanky.dds</PackagePath>
+      <Modified>2017-03-07T03:01:26.740</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\Percy1.dds">
       <PackagePath>Assets\Percy1.dds</PackagePath>
@@ -109,10 +113,6 @@
       <PackagePath>Assets\CHARACTER_Shrek.obj</PackagePath>
       <Modified>2017-03-02T18:44:27.366</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\linktheobj.obj">
-      <PackagePath>Assets\linktheobj.obj</PackagePath>
-      <Modified>2017-03-03T04:20:53.144</Modified>
-    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\ballkirby.obj">
       <PackagePath>Assets\ballkirby.obj</PackagePath>
       <Modified>2017-03-03T04:33:38.431</Modified>
@@ -129,21 +129,25 @@
       <PackagePath>Assets\course_model_new.obj</PackagePath>
       <Modified>2017-03-06T06:26:03.799</Modified>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\lanky.obj">
+      <PackagePath>Assets\lanky.obj</PackagePath>
+      <Modified>2017-03-07T02:31:27.968</Modified>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\SamplePixelShader.cso">
       <PackagePath>SamplePixelShader.cso</PackagePath>
-      <Modified>2017-03-04T04:51:48.607</Modified>
+      <Modified>2017-03-07T02:59:30.410</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\SampleVertexShader.cso">
       <PackagePath>SampleVertexShader.cso</PackagePath>
-      <Modified>2017-03-04T04:51:48.684</Modified>
+      <Modified>2017-03-07T02:59:30.531</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\PixelShader.cso">
       <PackagePath>PixelShader.cso</PackagePath>
-      <Modified>2017-03-06T06:50:29.566</Modified>
+      <Modified>2017-03-07T03:17:50.315</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\VertexShader.cso">
       <PackagePath>VertexShader.cso</PackagePath>
-      <Modified>2017-03-06T05:39:12.360</Modified>
+      <Modified>2017-03-07T02:59:30.744</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.UniversalCRT.Debug\10.0.10586.0\\redist\Debug\X64\ucrtbased.dll">
       <PackagePath>ucrtbased.dll</PackagePath>
@@ -152,7 +156,7 @@
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-03-06T06:26:35.351</Modified>
+      <Modified>2017-03-07T18:28:10.810</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

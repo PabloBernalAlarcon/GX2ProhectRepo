@@ -11,8 +11,8 @@ struct PixelShaderInput
 
 float4 DL(PixelShaderInput input)
 {
-	float3 LightDirection = { 1.0f, 0.0f, 0.0f };
-	float LightRatio = clamp(dot(-normalize(LightDirection), input.normals), 0, 1);
+	float3 LightDirection = { 0.0f, -0.3f, 1.0f };
+	float LightRatio = saturate(dot(-normalize(LightDirection), input.normals));
 	float3 Color = { 1.0f, 1.0f, 1.0f };
 	float4 Return = float4(Color, 1.0f) * LightRatio;
 	return Return;
@@ -20,14 +20,31 @@ float4 DL(PixelShaderInput input)
 
 float4 PL(PixelShaderInput input) {
 	float3 lightpos;
-	lightpos.x = -1.0f - input.WorldPos.x;
+	lightpos.x = -3.0f - input.WorldPos.x;
 	lightpos.y = 1.0f - input.WorldPos.y;
 	lightpos.z = 1.0f - input.WorldPos.z;
+	float mag = sqrt(lightpos.x*lightpos.x + lightpos.y*lightpos.y + lightpos.z*lightpos.z);
+	float atenuation = 1.0f - saturate(mag / 10.0f);
 	float3 lightdir= normalize(lightpos);
-	float lightratio = clamp(dot(normalize(lightdir), input.normals), 0.0f, 1.0f);
+	float lightratio = saturate(dot(normalize(lightdir), input.normals));
 	float3 Color = { 1.0f, 0.0f, 0.0f };
-	float4 result = float4(Color, 1.0f)*lightratio;
+	float4 result = float4(Color, 1.0f)*lightratio*atenuation;
 	return result;
+
+	/*float3 lightpos;
+	float radius = 13.50f;
+
+	lightpos.x = 10.0f - input.WorldPos.x;
+	lightpos.y = 10.0f - input.WorldPos.y;
+	lightpos.z = 0.0f - input.WorldPos.z;
+
+	float mag = sqrt(lightpos.xlightpos.x + lightpos.ylightpos.y + lightpos.zlightpos.z);
+	float3 direction = normalize(lightpos);
+	float ratio = clamp(dot(-normalize(direction), normalize(input.normal)), 0.0f, 1.0f);
+	float att = 1.0f - clamp(mag / radius, 0.0f, 1.0f);
+	float3 clr = { 0.0f,1.0f,0.0f };
+	float4 ReturnThis = float4(clr, 1.0f)ratio*att;
+	return ReturnThis;*/
 }
 
 float4 SL(PixelShaderInput input)
@@ -65,6 +82,6 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	//return base.Sample(samp, input.uv) * DirectionalLight;
 	//return base.Sample(samp, input.uv) * PointLight;
 	//return base.Sample(samp, input.uv) * SpotLight;
-	float4 All = DirectionalLight + PointLight + SpotLight;
+	float4 All = DirectionalLight + PointLight +SpotLight;
 	return base.Sample(samp, input.uv) * All;
 }
