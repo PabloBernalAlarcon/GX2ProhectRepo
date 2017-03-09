@@ -198,8 +198,10 @@
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
     <Image Include="Assets\Percy1.dds" />
     <Image Include="Assets\Percy1.png" />
+    <Image Include="Assets\percyface.dds" />
     <Image Include="Assets\shrek.dds" />
     <Image Include="Assets\Shrek.png" />
+    <Image Include="Assets\spacemap.dds" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
     <Image Include="Assets\Square150x150Logo.scale-200.png" />
     <Image Include="Assets\Square44x44Logo.scale-200.png" />

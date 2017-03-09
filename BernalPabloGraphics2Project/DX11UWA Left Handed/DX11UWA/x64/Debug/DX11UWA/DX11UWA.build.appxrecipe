@@ -40,8 +40,14 @@
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\Percy1.dds">
       <PackagePath>Assets\Percy1.dds</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\percyface.dds">
+      <PackagePath>Assets\percyface.dds</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\shrek.dds">
       <PackagePath>Assets\shrek.dds</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\spacemap.dds">
+      <PackagePath>Assets\spacemap.dds</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\stafy_01.dds">
       <PackagePath>Assets\stafy_01.dds</PackagePath>

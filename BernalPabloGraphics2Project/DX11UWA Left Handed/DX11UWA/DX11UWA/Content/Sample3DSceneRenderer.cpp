@@ -99,6 +99,9 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 	m_JynxconstantBufferData.projection = m_constantBufferData.projection;
 	m_JynxconstantBufferData.view = m_constantBufferData.view;
 
+	//m_RTCconstantBufferData.model = yee;
+	m_RTCconstantBufferData.projection = m_constantBufferData.projection;
+	m_RTCconstantBufferData.view = m_constantBufferData.view;
 }
 
 #pragma region Movements
@@ -109,6 +112,7 @@ void Sample3DSceneRenderer::Rotate(float radians)
 	//XMMATRIX whatever = XMLoadFloat4x4(&m_ShrekconstantBufferData.model);
 	//XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixMultiply(XMMatrixIdentity(),XMMatrixTranspose(XMMatrixRotationY(radians))));
 
+	XMStoreFloat4x4(&m_RTCconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(-radians)));
 
 	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixRotationX(radians)));
 
@@ -250,7 +254,7 @@ void Sample3DSceneRenderer::Render(void)
 	}
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
-
+	ID3D11RenderTargetView *const targets[1] = { m_deviceResources->GetBackBufferRenderTargetView() };
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_camera))));
 
 #pragma region DrawtheCube
@@ -275,6 +279,29 @@ void Sample3DSceneRenderer::Render(void)
 	context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
 	// Draw the objects.
 	context->DrawIndexed(m_indexCount, 0, 0);
+#pragma endregion
+
+#pragma region RTCCube
+	context->UpdateSubresource1(m_RTCconstantBuffer.Get(), 0, NULL, &m_RTCconstantBufferData, 0, 0, 0);
+	// Each vertex is one instance of the VertexPositionColor struct.
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_RTCvertexBuffer.GetAddressOf(), &stride, &offset);
+	// Each index is one 16-bit unsigned integer (short).
+	context->IASetIndexBuffer(m_RTCindexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_RTCinputLayout.Get());
+	// Attach our vertex shader.
+	context->VSSetShader(m_RTCvertexShader.Get(), nullptr, 0);
+	// Send the constant buffer to the graphics device.
+	context->VSSetConstantBuffers1(0, 1, m_RTCconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	// Attach our pixel shader.
+	context->PSSetShader(m_RTCpixelShader.Get(), nullptr, 0);
+	// Draw the objects.
+
+	context->PSSetShaderResources(0, 1, m_RTCTexResourceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_RTCTexSampleState.GetAddressOf());
+	context->DrawIndexed(m_RTCindexCount, 0, 0);
 #pragma endregion
 
 
@@ -337,6 +364,7 @@ void Sample3DSceneRenderer::Render(void)
 
 void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 {
+#pragma region Cube
 	// Load shaders asynchronously.
 	auto loadVSTask = DX::ReadDataAsync(L"SampleVertexShader.cso");
 	auto loadPSTask = DX::ReadDataAsync(L"SamplePixelShader.cso");
@@ -363,6 +391,189 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
 		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&constantBufferDesc, nullptr, &m_constantBuffer));
 	});
+
+	/////////////
+	// Once both shaders are loaded, create the mesh.
+	auto createCubeTask = (createPSTask && createVSTask).then([this]()
+	{
+		// Load mesh vertices. Each vertex has a position and a color.
+		static const VertexPositionColor cubeVertices[] =
+		{
+			/*0*/{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+			/*1*/{ XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 1.0f) },
+			/*2*/{ XMFLOAT3(0.5f,  -0.5f, -0.5f), XMFLOAT3(0.0f, 1.0f, 0.0f) },
+			/*3*/{ XMFLOAT3(0.5f,  -0.5f,  0.5f), XMFLOAT3(0.0f, 1.0f, 1.0f) },
+			/*4*/{ XMFLOAT3(0.0f, 0.5f, 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f) },
+		};
+
+		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
+		vertexBufferData.pSysMem = cubeVertices;
+		vertexBufferData.SysMemPitch = 0;
+		vertexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(cubeVertices), D3D11_BIND_VERTEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &m_vertexBuffer));
+
+		// Load mesh indices. Each trio of indices represents
+		// a triangle to be rendered on the screen.
+		// For example: 0,2,1 means that the vertices with indexes
+		// 0, 2 and 1 from the vertex buffer compose the 
+		// first triangle of this mesh.
+		static const unsigned short cubeIndices[] =
+		{
+			1,0,2,
+			2,3,1,
+
+			0,4,2,
+			2,4,3,
+			3,4,1,
+			1,4,0,
+		};
+
+		m_indexCount = ARRAYSIZE(cubeIndices);
+
+		D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
+		indexBufferData.pSysMem = cubeIndices;
+		indexBufferData.SysMemPitch = 0;
+		indexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cubeIndices), D3D11_BIND_INDEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_indexBuffer));
+	});
+
+	// Once the cube is loaded, the object is ready to be rendered.
+	createCubeTask.then([this]()
+	{
+		m_loadingComplete = true;
+	});
+#pragma endregion
+#pragma region RTCcube
+	// Load shaders asynchronously.
+	auto RTCloadVSTask = DX::ReadDataAsync(L"VertexShader.cso");
+	auto RTCloadPSTask = DX::ReadDataAsync(L"PixelShader.cso");
+
+	// After the vertex shader file is loaded, create the shader and input layout.
+	auto createRTCVSTask = RTCloadVSTask.then([this](const std::vector<byte>& fileData)
+	{
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateVertexShader(&fileData[0], fileData.size(), nullptr, &m_RTCvertexShader));
+
+		static const D3D11_INPUT_ELEMENT_DESC RTCvertexDesc[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "UV", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateInputLayout(RTCvertexDesc, ARRAYSIZE(RTCvertexDesc), &fileData[0], fileData.size(), &m_RTCinputLayout));
+	});
+
+	// After the pixel shader file is loaded, create the shader and constant buffer.
+	auto createRTCPSTask = RTCloadPSTask.then([this](const std::vector<byte>& fileData)
+	{
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreatePixelShader(&fileData[0], fileData.size(), nullptr, &m_RTCpixelShader));
+
+		CD3D11_BUFFER_DESC RTCconstantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&RTCconstantBufferDesc, nullptr, &m_RTCconstantBuffer));
+	});
+	/////////////
+	// Once both shaders are loaded, create the mesh.
+	auto RTCcreateCubeTask = (createRTCPSTask && createRTCVSTask).then([this]()
+	{
+		// Load mesh vertices. Each vertex has a position and a color.
+		static const VertexPositionUVNormal RTCcubeVertices[] =
+		{
+			//Front Face
+			/*0*/{ XMFLOAT3(-5.0f, 1.0f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f) },
+			/*1*/{ XMFLOAT3(-4.0f, 1.0f, -0.5f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f) },
+			/*2*/{ XMFLOAT3(-5.0f, 0.0f, -0.5f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f) },
+			/*3*/{ XMFLOAT3(-4.0f, 0.0f, -0.5f), XMFLOAT3(1.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f) },
+
+			//Right Face
+			/*4*/{ XMFLOAT3(-4.0f, 1.0f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f) },
+			/*5*/{ XMFLOAT3(-4.0f, 1.0f, 0.5f), XMFLOAT3(1.0f, 0.0f, 0.0f),  XMFLOAT3(1.0f, 0.0f, 0.0f) },
+			/*6*/{ XMFLOAT3(-4.0f, 0.0f, -0.5f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f) },
+			/*7*/{ XMFLOAT3(-4.0f, 0.0f, 0.5f), XMFLOAT3(1.0f, 1.0f, 0.0f),  XMFLOAT3(1.0f, 0.0f, 0.0f) },
+
+			//Back Face
+			/*8*/{ XMFLOAT3(-4.0f, 1.0f, 0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f),  XMFLOAT3(0.0f, 0.0f, 1.0f) },
+			/*9*/{ XMFLOAT3(-5.0f, 1.0f, 0.5f), XMFLOAT3(1.0f, 0.0f, 0.0f),  XMFLOAT3(0.0f, 0.0f, 1.0f) },
+			/*10*/{ XMFLOAT3(-4.0f, 0.0f, 0.5f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f) },
+			/*11*/{ XMFLOAT3(-5.0f, 0.0f, 0.5f), XMFLOAT3(1.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f) },
+			//Left Face
+			/*12*/{ XMFLOAT3(-5.0f, 1.0f, 0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f),  XMFLOAT3(-1.0f, 0.0f, 0.0f) },
+			/*13*/{ XMFLOAT3(-5.0f, 1.0f, -0.5f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f) },
+			/*14*/{ XMFLOAT3(-5.0f, 0.0f, 0.5f), XMFLOAT3(0.0f, 1.0f, 0.0f),  XMFLOAT3(-1.0f, 0.0f, 0.0f) },
+			/*15*/{ XMFLOAT3(-5.0f, 0.0f, -0.5f), XMFLOAT3(1.0f, 1.0f, 0.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f) },
+
+			//Top Face
+			/*16*/{ XMFLOAT3(-5.0f, 1.0f, 0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f),  XMFLOAT3(0.0f, 1.0f, 0.0f) },
+			/*17*/{ XMFLOAT3(-4.0f, 1.0f, 0.5f), XMFLOAT3(1.0f, 0.0f, 0.0f),  XMFLOAT3(0.0f, 1.0f, 0.0f) },
+			/*18*/{ XMFLOAT3(-5.0f, 1.0f, -0.5f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f) },
+			/*19*/{ XMFLOAT3(-4.0f, 1.0f, -0.5f), XMFLOAT3(1.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f) },
+
+			//Bottom Face
+			/*20*/{ XMFLOAT3(-5.0f, 0.0f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f) },
+			/*21*/{ XMFLOAT3(-4.0f, 0.0f, -0.5f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f) },
+			/*22*/{ XMFLOAT3(-5.0f, 0.0f, 0.5f), XMFLOAT3(0.0f, 1.0f, 0.0f),  XMFLOAT3(0.0f, -1.0f, 0.0f) },
+			/*23*/{ XMFLOAT3(-4.0f, 0.0f, 0.5f), XMFLOAT3(1.0f, 1.0f, 0.0f),  XMFLOAT3(0.0f, -1.0f, 0.0f) },
+		};
+		D3D11_SAMPLER_DESC SamDesc;
+		ZeroMemory(&SamDesc, sizeof(SamDesc));
+		SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&SamDesc, &m_RTCTexSampleState));
+		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/percyface.dds", NULL, &m_RTCTexResourceView));
+
+		D3D11_SUBRESOURCE_DATA RTCvertexBufferData = { 0 };
+		RTCvertexBufferData.pSysMem = RTCcubeVertices;
+		RTCvertexBufferData.SysMemPitch = 0;
+		RTCvertexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC RTCvertexBufferDesc(sizeof(RTCcubeVertices), D3D11_BIND_VERTEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&RTCvertexBufferDesc, &RTCvertexBufferData, &m_RTCvertexBuffer));
+
+		// Load mesh indices. Each trio of indices represents
+		// a triangle to be rendered on the screen.
+		// For example: 0,2,1 means that the vertices with indexes
+		// 0, 2 and 1 from the vertex buffer compose the 
+		// first triangle of this mesh.
+		static const unsigned short RTCcubeIndices[] =
+		{
+			0,1,3,
+			3,2,0,
+
+			4,5,7,
+			7,6,4,
+
+			8,9,11,
+			11,10,8,
+
+			12,13,15,
+			15,14,12,
+
+			16,17,19,
+			19,18,16,
+
+			20,21,23,
+			23,22,20,
+		};
+
+		m_RTCindexCount = ARRAYSIZE(RTCcubeIndices);
+
+		D3D11_SUBRESOURCE_DATA RTCindexBufferData = { 0 };
+		RTCindexBufferData.pSysMem = RTCcubeIndices;
+		RTCindexBufferData.SysMemPitch = 0;
+		RTCindexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC RTCindexBufferDesc(sizeof(RTCcubeIndices), D3D11_BIND_INDEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&RTCindexBufferDesc, &RTCindexBufferData, &m_RTCindexBuffer));
+	});
+
+	// Once the cube is loaded, the object is ready to be rendered.
+	/*createCubeTask.then([this]()
+	{
+		m_loadingComplete = true;
+	});*/
+#pragma endregion;
 #pragma region kirbyShit
 
 	//Shrek Shit
@@ -556,58 +767,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 	});
 
 #pragma endregion
-#pragma region Cube
-	// Once both shaders are loaded, create the mesh.
-	auto createCubeTask = (createPSTask && createVSTask).then([this]()
-	{
-		// Load mesh vertices. Each vertex has a position and a color.
-		static const VertexPositionColor cubeVertices[] =
-		{
-			/*0*/{XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f)},
-			/*1*/{XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 1.0f)},
-			/*2*/{XMFLOAT3(0.5f,  -0.5f, -0.5f), XMFLOAT3(0.0f, 1.0f, 0.0f)},
-			/*3*/{XMFLOAT3(0.5f,  -0.5f,  0.5f), XMFLOAT3(0.0f, 1.0f, 1.0f)},
-			/*4*/{XMFLOAT3( 0.0f, 0.5f, 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)},
-		};
 
-		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
-		vertexBufferData.pSysMem = cubeVertices;
-		vertexBufferData.SysMemPitch = 0;
-		vertexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(cubeVertices), D3D11_BIND_VERTEX_BUFFER);
-		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &m_vertexBuffer));
-
-		// Load mesh indices. Each trio of indices represents
-		// a triangle to be rendered on the screen.
-		// For example: 0,2,1 means that the vertices with indexes
-		// 0, 2 and 1 from the vertex buffer compose the 
-		// first triangle of this mesh.
-		static const unsigned short cubeIndices[] =
-		{
-			1,0,2,
-			2,3,1,
-
-			0,4,2,
-			2,4,3,
-			3,4,1,
-			1,4,0,
-		};
-
-		m_indexCount = ARRAYSIZE(cubeIndices);
-
-		D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
-		indexBufferData.pSysMem = cubeIndices;
-		indexBufferData.SysMemPitch = 0;
-		indexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cubeIndices), D3D11_BIND_INDEX_BUFFER);
-		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_indexBuffer));
-	});
-#pragma endregion
-	// Once the cube is loaded, the object is ready to be rendered.
-	createCubeTask.then([this]()
-	{
-		m_loadingComplete = true;
-	});
 }
 
 void Sample3DSceneRenderer::ReleaseDeviceDependentResources(void)
@@ -619,6 +779,29 @@ void Sample3DSceneRenderer::ReleaseDeviceDependentResources(void)
 	m_constantBuffer.Reset();
 	m_vertexBuffer.Reset();
 	m_indexBuffer.Reset();
+	
+	m_ShrekvertexShader.Reset();
+	m_ShrekinputLayout.Reset();
+	m_ShrekpixelShader.Reset();
+	m_ShrekconstantBuffer.Reset();
+	m_ShrekvertexBuffer.Reset();
+	m_ShrekindexBuffer.Reset();
+
+	m_PercyvertexShader.Reset();
+	m_PercyinputLayout.Reset();
+	m_PercypixelShader.Reset();
+	m_PercyconstantBuffer.Reset();
+	m_PercyvertexBuffer.Reset();
+	m_PercyindexBuffer.Reset();
+	
+	m_JynxvertexShader.Reset();
+	m_JynxinputLayout.Reset();
+	m_JynxpixelShader.Reset();
+	m_JynxconstantBuffer.Reset();
+	m_JynxvertexBuffer.Reset();
+	m_JynxindexBuffer.Reset();
+
+
 }
 
 #pragma region Loaders 

@@ -134,6 +134,12 @@
     <Image Include="Assets\jynx.dds">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\spacemap.dds">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\percyface.dds">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />

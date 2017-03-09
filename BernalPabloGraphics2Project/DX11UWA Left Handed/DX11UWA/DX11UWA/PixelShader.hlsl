@@ -64,10 +64,10 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	float4 PointLight = PL(input);
 	float4 SpotLight = SL(input);
 
-	
+	float4 ModelColor = base.Sample(samp, input.uv);
 	//return base.Sample(samp, input.uv) * DirectionalLight;
 	//return base.Sample(samp, input.uv) * PointLight;
 	//return base.Sample(samp, input.uv) * SpotLight;
 	float4 All = DirectionalLight + PointLight +SpotLight;
-	return base.Sample(samp, input.uv) * All;
+	return base.Sample(samp, input.uv) * All*ModelColor;
 }
