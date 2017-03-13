@@ -24,6 +24,8 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
+
+	
 }
 
 // Initializes view parameters when the window size changes.
@@ -86,7 +88,7 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 
-	m_ShrekconstantBufferData.model = yee;
+	//m_ShrekconstantBufferData.model = yee;
 	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14f)));
 	m_ShrekconstantBufferData.projection = m_constantBufferData.projection;
 	m_ShrekconstantBufferData.view = m_constantBufferData.view;
@@ -99,7 +101,7 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 	m_JynxconstantBufferData.projection = m_constantBufferData.projection;
 	m_JynxconstantBufferData.view = m_constantBufferData.view;
 
-	//m_RTCconstantBufferData.model = yee;
+	m_RTCconstantBufferData.model = yee;
 	m_RTCconstantBufferData.projection = m_constantBufferData.projection;
 	m_RTCconstantBufferData.view = m_constantBufferData.view;
 }
@@ -111,6 +113,7 @@ void Sample3DSceneRenderer::Rotate(float radians)
 	// Prepare to pass the updated model matrix to the shader
 	//XMMATRIX whatever = XMLoadFloat4x4(&m_ShrekconstantBufferData.model);
 	//XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixMultiply(XMMatrixIdentity(),XMMatrixTranspose(XMMatrixRotationY(radians))));
+	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(-radians)));
 
 	XMStoreFloat4x4(&m_RTCconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(-radians)));
 
@@ -257,12 +260,16 @@ void Sample3DSceneRenderer::Render(void)
 	ID3D11RenderTargetView *const targets[1] = { m_deviceResources->GetBackBufferRenderTargetView() };
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_camera))));
 
+
+	context->OMSetRenderTargets(1, targets, m_deviceResources->GetDepthStencilView());
+
 #pragma region DrawtheCube
+
+	context->UpdateSubresource1(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0, 0);
 	m_constantBufferData.model._14 = 0.0f;
 	m_constantBufferData.model._24 = 6.0f;
 	m_constantBufferData.model._34 = -8.0f;
 	// Prepare the constant buffer to send it to the graphics device.
-	context->UpdateSubresource1(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0, 0);
 	// Each vertex is one instance of the VertexPositionColor struct.
 	UINT stride = sizeof(VertexPositionColor);
 	UINT offset = 0;
@@ -281,28 +288,97 @@ void Sample3DSceneRenderer::Render(void)
 	context->DrawIndexed(m_indexCount, 0, 0);
 #pragma endregion
 
-#pragma region RTCCube
-	context->UpdateSubresource1(m_RTCconstantBuffer.Get(), 0, NULL, &m_RTCconstantBufferData, 0, 0, 0);
-	// Each vertex is one instance of the VertexPositionColor struct.
+
+
+#pragma region DrawKriby
+
+
+	context->UpdateSubresource1(m_ShrekconstantBuffer.Get(), 0, NULL, &m_ShrekconstantBufferData, 0, 0, 0);
+	m_PercyconstantBufferData.model._34 = 1.0f;
 	stride = sizeof(VertexPositionUVNormal);
 	offset = 0;
-	context->IASetVertexBuffers(0, 1, m_RTCvertexBuffer.GetAddressOf(), &stride, &offset);
-	// Each index is one 16-bit unsigned integer (short).
-	context->IASetIndexBuffer(m_RTCindexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	context->IASetVertexBuffers(0, 1, m_ShrekvertexBuffer.GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(m_ShrekindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	context->IASetInputLayout(m_RTCinputLayout.Get());
-	// Attach our vertex shader.
-	context->VSSetShader(m_RTCvertexShader.Get(), nullptr, 0);
-	// Send the constant buffer to the graphics device.
-	context->VSSetConstantBuffers1(0, 1, m_RTCconstantBuffer.GetAddressOf(), nullptr, nullptr);
-	// Attach our pixel shader.
-	context->PSSetShader(m_RTCpixelShader.Get(), nullptr, 0);
-	// Draw the objects.
-
-	context->PSSetShaderResources(0, 1, m_RTCTexResourceView.GetAddressOf());
-	context->PSSetSamplers(0, 1, m_RTCTexSampleState.GetAddressOf());
-	context->DrawIndexed(m_RTCindexCount, 0, 0);
+	context->IASetInputLayout(m_ShrekinputLayout.Get());
+	context->VSSetShader(m_ShrekvertexShader.Get(), nullptr, 0);
+	context->VSSetConstantBuffers1(0, 1, m_ShrekconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	context->PSSetShader(m_ShrekpixelShader.Get(), nullptr, 0);
+	context->PSSetShaderResources(0, 1, m_ShrekResouceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_ShrekSamplerState.GetAddressOf());
+	context->DrawIndexed(m_ShrekindexCount, 0, 0);
 #pragma endregion
+
+#pragma region DrawPercy
+
+	context->UpdateSubresource1(m_PercyconstantBuffer.Get(), 0, NULL, &m_PercyconstantBufferData, 0, 0, 0);
+	m_PercyconstantBufferData.model._24 = 6.5f;
+	m_PercyconstantBufferData.model._34 = 2.0f;
+
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_PercyvertexBuffer.GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(m_PercyindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_PercyinputLayout.Get());
+	context->VSSetShader(m_PercyvertexShader.Get(), nullptr, 0);
+	context->VSSetConstantBuffers1(0, 1, m_PercyconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	context->PSSetShader(m_PercypixelShader.Get(), nullptr, 0);
+	context->PSSetShaderResources(0, 1, m_PercyResouceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_PercySamplerState.GetAddressOf());
+	context->DrawIndexed(m_PercyindexCount, 0, 0);
+
+#pragma endregion
+
+#pragma region DrawJynx
+
+
+	context->UpdateSubresource1(m_JynxconstantBuffer.Get(), 0, NULL, &m_JynxconstantBufferData, 0, 0, 0);
+	m_JynxconstantBufferData.model._34 = -4.0f;
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_JynxvertexBuffer.GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(m_JynxindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_JynxinputLayout.Get());
+	context->VSSetShader(m_JynxvertexShader.Get(), nullptr, 0);
+	context->VSSetConstantBuffers1(0, 1, m_JynxconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	context->PSSetShader(m_JynxpixelShader.Get(), nullptr, 0);
+	context->PSSetShaderResources(0, 1, m_JynxResouceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_JynxSamplerState.GetAddressOf());
+	context->DrawIndexed(m_JynxindexCount, 0, 0);
+#pragma endregion
+	context->OMSetRenderTargets(1, m_RTCRenderTargetView.GetAddressOf(), m_deviceResources->GetDepthStencilView());
+	context->ClearRenderTargetView(m_RTCRenderTargetView.Get(), DirectX::Colors::SeaGreen);
+
+
+#pragma region Rendertotexture
+#pragma region DrawtheCube
+
+	m_constantBufferData.model._14 = 0.0f;
+	m_constantBufferData.model._24 = 6.0f;
+	m_constantBufferData.model._34 = -8.0f;
+	// Prepare the constant buffer to send it to the graphics device.
+
+	context->UpdateSubresource1(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0, 0);
+	// Each vertex is one instance of the VertexPositionColor struct.
+	stride = sizeof(VertexPositionColor);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
+	// Each index is one 16-bit unsigned integer (short).
+	context->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_inputLayout.Get());
+	// Attach our vertex shader.
+	context->VSSetShader(m_vertexShader.Get(), nullptr, 0);
+	// Send the constant buffer to the graphics device.
+	context->VSSetConstantBuffers1(0, 1, m_constantBuffer.GetAddressOf(), nullptr, nullptr);
+	// Attach our pixel shader.
+	context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
+	// Draw the objects.
+	context->DrawIndexed(m_indexCount, 0, 0);
+#pragma endregion
+
 
 
 #pragma region DrawKriby
@@ -324,8 +400,8 @@ void Sample3DSceneRenderer::Render(void)
 #pragma endregion
 
 #pragma region DrawPercy
-	m_PercyconstantBufferData.model._24 = 6.5f;
-	m_PercyconstantBufferData.model._34 = 2.0f;
+	//m_PercyconstantBufferData.model._24 = 6.5f;
+	//m_PercyconstantBufferData.model._34 = 2.0f;
 	context->UpdateSubresource1(m_PercyconstantBuffer.Get(), 0, NULL, &m_PercyconstantBufferData, 0, 0, 0);
 	stride = sizeof(VertexPositionUVNormal);
 	offset = 0;
@@ -345,7 +421,7 @@ void Sample3DSceneRenderer::Render(void)
 #pragma region DrawJynx
 
 
-	m_JynxconstantBufferData.model._34 = -4.0f;
+	//m_JynxconstantBufferData.model._34 = -4.0f;
 	context->UpdateSubresource1(m_JynxconstantBuffer.Get(), 0, NULL, &m_JynxconstantBufferData, 0, 0, 0);
 	stride = sizeof(VertexPositionUVNormal);
 	offset = 0;
@@ -360,6 +436,32 @@ void Sample3DSceneRenderer::Render(void)
 	context->PSSetSamplers(0, 1, m_JynxSamplerState.GetAddressOf());
 	context->DrawIndexed(m_JynxindexCount, 0, 0);
 #pragma endregion
+#pragma endregion 
+#pragma region RTCCube
+
+	context->OMSetRenderTargets(1, targets, m_deviceResources->GetDepthStencilView());
+	context->UpdateSubresource1(m_RTCconstantBuffer.Get(), 0, NULL, &m_RTCconstantBufferData, 0, 0, 0);
+	// Each vertex is one instance of the VertexPositionColor struct.
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_RTCvertexBuffer.GetAddressOf(), &stride, &offset);
+	// Each index is one 16-bit unsigned integer (short).
+	context->IASetIndexBuffer(m_RTCindexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_RTCinputLayout.Get());
+	// Attach our vertex shader.
+	context->VSSetShader(m_RTCvertexShader.Get(), nullptr, 0);
+	// Send the constant buffer to the graphics device.
+	context->VSSetConstantBuffers1(0, 1, m_RTCconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	// Attach our pixel shader.
+	context->PSSetShader(m_RTCpixelShader.Get(), nullptr, 0);
+	// Draw the objects.
+
+	context->PSSetShaderResources(0, 1, m_RTCSRV.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_RTCTexSampleState.GetAddressOf());
+	context->DrawIndexed(m_RTCindexCount, 0, 0);
+#pragma endregion
+
 }
 
 void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
@@ -448,7 +550,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 #pragma region RTCcube
 	// Load shaders asynchronously.
 	auto RTCloadVSTask = DX::ReadDataAsync(L"VertexShader.cso");
-	auto RTCloadPSTask = DX::ReadDataAsync(L"PixelShader.cso");
+	auto RTCloadPSTask = DX::ReadDataAsync(L"postProcessPixel.cso");
 
 	// After the vertex shader file is loaded, create the shader and input layout.
 	auto createRTCVSTask = RTCloadVSTask.then([this](const std::vector<byte>& fileData)
@@ -474,9 +576,43 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&RTCconstantBufferDesc, nullptr, &m_RTCconstantBuffer));
 	});
 	/////////////
+
+
 	// Once both shaders are loaded, create the mesh.
 	auto RTCcreateCubeTask = (createRTCPSTask && createRTCVSTask).then([this]()
 	{
+		
+		D3D11_TEXTURE2D_DESC desc2d;
+		ZeroMemory(&desc2d, sizeof(desc2d));
+		Size outputSize = m_deviceResources->GetOutputSize();
+
+		desc2d.MipLevels = 1;
+		desc2d.Width = outputSize.Width;
+		desc2d.Height = outputSize.Height;
+		desc2d.ArraySize = 1;
+		desc2d.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		desc2d.SampleDesc.Count = 1;
+		desc2d.Usage = D3D11_USAGE_DEFAULT;
+		desc2d.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		desc2d.CPUAccessFlags = 0;
+		desc2d.MiscFlags = 0;
+
+		m_deviceResources->GetD3DDevice()->CreateTexture2D(&desc2d, NULL, &m_RTCRenderTargetTextureMap);
+
+		D3D11_RENDER_TARGET_VIEW_DESC targetviewdesc;
+		targetviewdesc.Format = desc2d.Format;
+		targetviewdesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		targetviewdesc.Texture2D.MipSlice = 0;
+
+		m_deviceResources->GetD3DDevice()->CreateRenderTargetView(m_RTCRenderTargetTextureMap.Get(), &targetviewdesc, &m_RTCRenderTargetView);
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC resourceviewdesc;
+		resourceviewdesc.Format = desc2d.Format;
+		resourceviewdesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
+		resourceviewdesc.Texture2D.MostDetailedMip = 0;
+		resourceviewdesc.Texture2D.MipLevels = 1;
+
+		m_deviceResources->GetD3DDevice()->CreateShaderResourceView(m_RTCRenderTargetTextureMap.Get(), &resourceviewdesc, &m_RTCSRV);
 		// Load mesh vertices. Each vertex has a position and a color.
 		static const VertexPositionUVNormal RTCcubeVertices[] =
 		{
@@ -522,8 +658,8 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 		SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
-		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&SamDesc, &m_RTCTexSampleState));
-		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/percyface.dds", NULL, &m_RTCTexResourceView));
+		//DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&SamDesc, &m_RTCTexSampleState));
+		//DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/percyface.dds", NULL, &m_RTCTexResourceView));
 
 		D3D11_SUBRESOURCE_DATA RTCvertexBufferData = { 0 };
 		RTCvertexBufferData.pSysMem = RTCcubeVertices;

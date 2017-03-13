@@ -25,6 +25,7 @@ Assets\StoreLogo.png
 Assets\Wide310x150Logo.scale-200.png
 Assets\zara.dds
 PixelShader.cso
+postProcessPixel.cso
 SamplePixelShader.cso
 SampleVertexShader.cso
 VertexShader.cso

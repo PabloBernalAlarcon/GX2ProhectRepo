@@ -65,7 +65,6 @@ namespace DX11UWA
 		DirectX::XMMATRIX                                 m_RTCTextureProjection;
 
 		Microsoft::WRL::ComPtr<ID3D11SamplerState>       m_RTCTexSampleState;
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_RTCTexResourceView;
 
 		//Kirby
 		Microsoft::WRL::ComPtr<ID3D11InputLayout>	m_ShrekinputLayout;
@@ -129,6 +128,10 @@ namespace DX11UWA
 
 		// Matrix data member for the camera
 		DirectX::XMFLOAT4X4 m_camera;
+
+		// viewports
+		D3D11_VIEWPORT * m_viewports;
+		bool Active
 	};
 }
 
