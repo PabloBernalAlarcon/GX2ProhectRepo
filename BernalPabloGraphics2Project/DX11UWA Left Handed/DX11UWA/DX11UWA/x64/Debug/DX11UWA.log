@@ -1,4 +1,6 @@
-﻿  Sample3DSceneRenderer.cpp
+﻿  App.cpp
+  Sample3DSceneRenderer.cpp
+  DX11UWAMain.cpp
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\content\sample3dscenerenderer.cpp(592): warning C4244: '=': conversion from 'float' to 'UINT', possible loss of data
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\content\sample3dscenerenderer.cpp(593): warning C4244: '=': conversion from 'float' to 'UINT', possible loss of data
 c:\users\pablo\desktop\gx2prohectrepo\bernalpablographics2project\dx11uwa left handed\dx11uwa\dx11uwa\content\sample3dscenerenderer.cpp(764): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
