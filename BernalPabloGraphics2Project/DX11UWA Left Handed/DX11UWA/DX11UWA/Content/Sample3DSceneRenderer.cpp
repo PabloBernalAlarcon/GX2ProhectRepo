@@ -57,6 +57,14 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(void)
 
 	XMStoreFloat4x4(&m_constantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
 
+	XMStoreFloat4x4(&m_ShrekconstantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
+
+	XMStoreFloat4x4(&m_PercyconstantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
+
+	XMStoreFloat4x4(&m_JynxconstantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
+
+	XMStoreFloat4x4(&m_RTCconstantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
+
 	// Eye is at (0,0.7,1.5), looking at point (0,-0.1,0) with the up-vector along the y-axis.
 	static const XMVECTORF32 eye = { 0.0f, 3.0f, -15.0f, 0.0f };
 	static const XMVECTORF32 at = { 0.0f, 2.0f, 0.0f, 0.0f };
@@ -64,6 +72,14 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(void)
 
 	XMStoreFloat4x4(&m_camera, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up)));
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
+
+	XMStoreFloat4x4(&m_ShrekconstantBufferData.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
+
+	XMStoreFloat4x4(&m_PercyconstantBufferData.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
+
+	XMStoreFloat4x4(&m_JynxconstantBufferData.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
+
+	XMStoreFloat4x4(&m_RTCconstantBufferData.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
 }
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
@@ -350,7 +366,7 @@ void Sample3DSceneRenderer::Render(void)
 #pragma endregion
 	context->OMSetRenderTargets(1, m_RTCRenderTargetView.GetAddressOf(), m_deviceResources->GetDepthStencilView());
 	context->ClearRenderTargetView(m_RTCRenderTargetView.Get(), DirectX::Colors::SeaGreen);
-
+	context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 #pragma region Rendertotexture
 #pragma region DrawtheCube
