@@ -290,24 +290,6 @@ void Sample3DSceneRenderer::Render(void)
 
 
 
-#pragma region DrawKriby
-
-
-	context->UpdateSubresource1(m_ShrekconstantBuffer.Get(), 0, NULL, &m_ShrekconstantBufferData, 0, 0, 0);
-	m_PercyconstantBufferData.model._34 = 1.0f;
-	stride = sizeof(VertexPositionUVNormal);
-	offset = 0;
-	context->IASetVertexBuffers(0, 1, m_ShrekvertexBuffer.GetAddressOf(), &stride, &offset);
-	context->IASetIndexBuffer(m_ShrekindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	context->IASetInputLayout(m_ShrekinputLayout.Get());
-	context->VSSetShader(m_ShrekvertexShader.Get(), nullptr, 0);
-	context->VSSetConstantBuffers1(0, 1, m_ShrekconstantBuffer.GetAddressOf(), nullptr, nullptr);
-	context->PSSetShader(m_ShrekpixelShader.Get(), nullptr, 0);
-	context->PSSetShaderResources(0, 1, m_ShrekResouceView.GetAddressOf());
-	context->PSSetSamplers(0, 1, m_ShrekSamplerState.GetAddressOf());
-	context->DrawIndexed(m_ShrekindexCount, 0, 0);
-#pragma endregion
 
 #pragma region DrawPercy
 
@@ -328,6 +310,24 @@ void Sample3DSceneRenderer::Render(void)
 	context->PSSetSamplers(0, 1, m_PercySamplerState.GetAddressOf());
 	context->DrawIndexed(m_PercyindexCount, 0, 0);
 
+#pragma endregion
+#pragma region DrawKriby
+
+
+	context->UpdateSubresource1(m_ShrekconstantBuffer.Get(), 0, NULL, &m_ShrekconstantBufferData, 0, 0, 0);
+	m_PercyconstantBufferData.model._34 = 1.0f;
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_ShrekvertexBuffer.GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(m_ShrekindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_ShrekinputLayout.Get());
+	context->VSSetShader(m_ShrekvertexShader.Get(), nullptr, 0);
+	context->VSSetConstantBuffers1(0, 1, m_ShrekconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	context->PSSetShader(m_ShrekpixelShader.Get(), nullptr, 0);
+	context->PSSetShaderResources(0, 1, m_ShrekResouceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_ShrekSamplerState.GetAddressOf());
+	context->DrawIndexed(m_ShrekindexCount, 0, 0);
 #pragma endregion
 
 #pragma region DrawJynx
@@ -381,23 +381,6 @@ void Sample3DSceneRenderer::Render(void)
 
 
 
-#pragma region DrawKriby
-
-
-	context->UpdateSubresource1(m_ShrekconstantBuffer.Get(), 0, NULL, &m_ShrekconstantBufferData, 0, 0, 0);
-	stride = sizeof(VertexPositionUVNormal);
-	offset = 0;
-	context->IASetVertexBuffers(0, 1, m_ShrekvertexBuffer.GetAddressOf(), &stride, &offset);
-	context->IASetIndexBuffer(m_ShrekindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	context->IASetInputLayout(m_ShrekinputLayout.Get());
-	context->VSSetShader(m_ShrekvertexShader.Get(), nullptr, 0);
-	context->VSSetConstantBuffers1(0, 1, m_ShrekconstantBuffer.GetAddressOf(), nullptr, nullptr);
-	context->PSSetShader(m_ShrekpixelShader.Get(), nullptr, 0);
-	context->PSSetShaderResources(0, 1, m_ShrekResouceView.GetAddressOf());
-	context->PSSetSamplers(0, 1, m_ShrekSamplerState.GetAddressOf());
-	context->DrawIndexed(m_ShrekindexCount, 0, 0);
-#pragma endregion
 
 #pragma region DrawPercy
 	//m_PercyconstantBufferData.model._24 = 6.5f;
@@ -417,6 +400,25 @@ void Sample3DSceneRenderer::Render(void)
 	context->DrawIndexed(m_PercyindexCount, 0, 0);
 
 #pragma endregion
+
+#pragma region DrawKriby
+
+
+	context->UpdateSubresource1(m_ShrekconstantBuffer.Get(), 0, NULL, &m_ShrekconstantBufferData, 0, 0, 0);
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_ShrekvertexBuffer.GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(m_ShrekindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_ShrekinputLayout.Get());
+	context->VSSetShader(m_ShrekvertexShader.Get(), nullptr, 0);
+	context->VSSetConstantBuffers1(0, 1, m_ShrekconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	context->PSSetShader(m_ShrekpixelShader.Get(), nullptr, 0);
+	context->PSSetShaderResources(0, 1, m_ShrekResouceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_ShrekSamplerState.GetAddressOf());
+	context->DrawIndexed(m_ShrekindexCount, 0, 0);
+#pragma endregion
+
 
 #pragma region DrawJynx
 

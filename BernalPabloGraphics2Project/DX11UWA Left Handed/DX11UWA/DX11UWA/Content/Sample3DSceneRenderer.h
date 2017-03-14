@@ -131,7 +131,7 @@ namespace DX11UWA
 
 		// viewports
 		D3D11_VIEWPORT * m_viewports;
-		bool Active
+		bool Active;
 	};
 }
 
