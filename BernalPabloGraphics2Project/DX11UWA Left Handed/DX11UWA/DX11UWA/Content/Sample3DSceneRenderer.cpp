@@ -35,6 +35,22 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(void)
 	float aspectRatio = outputSize.Width / outputSize.Height;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
 
+	m_viewportOne = new D3D11_VIEWPORT();
+	m_viewportOne->Height = outputSize.Height;
+	m_viewportOne->Width = outputSize.Width/2;
+	m_viewportOne->MinDepth = 0.0f;
+	m_viewportOne->MaxDepth = 0.1f;
+	m_viewportOne->TopLeftX = 0.0f;
+	m_viewportOne->TopLeftY = 0.0f;
+
+	m_viewportTwo = new D3D11_VIEWPORT();
+	m_viewportTwo->Height = outputSize.Height;
+	m_viewportTwo->Width = outputSize.Width/2;
+	m_viewportTwo->MinDepth = 0.0f;
+	m_viewportTwo->MaxDepth = 0.1f;
+	m_viewportTwo->TopLeftY = 0.0;
+	m_viewportTwo->TopLeftX = outputSize.Width/2;
+
 	// This is a simple example of change that can be made when the app is in
 	// portrait or snapped view.
 	if (aspectRatio < 1.0f)
@@ -47,7 +63,7 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(void)
 	// This post-multiplication step is required for any draw calls that are
 	// made to the swap chain render target. For draw calls to other targets,
 	// this transform should not be applied.
-
+	
 	// This sample makes use of a right-handed coordinate system using row-major matrices.
 	XMMATRIX perspectiveMatrix = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 100.0f);
 
@@ -65,6 +81,8 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(void)
 
 	XMStoreFloat4x4(&m_RTCconstantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
 
+	XMStoreFloat4x4(&m_SkyconstantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
+
 	// Eye is at (0,0.7,1.5), looking at point (0,-0.1,0) with the up-vector along the y-axis.
 	static const XMVECTORF32 eye = { 0.0f, 3.0f, -15.0f, 0.0f };
 	static const XMVECTORF32 at = { 0.0f, 2.0f, 0.0f, 0.0f };
@@ -80,6 +98,8 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(void)
 	XMStoreFloat4x4(&m_JynxconstantBufferData.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
 
 	XMStoreFloat4x4(&m_RTCconstantBufferData.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
+
+	XMStoreFloat4x4(&m_SkyconstantBufferData.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
 }
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
@@ -91,10 +111,19 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 		float radiansPerSecond = XMConvertToRadians(m_degreesPerSecond);
 		double totalRotation = timer.GetTotalSeconds() * radiansPerSecond;
 		float radians = static_cast<float>(fmod(totalRotation, XM_2PI));
+		m_constantBufferData.light.x = radians;
+		m_constantBufferData.light.y = radians;
+		m_constantBufferData.light.z = radians;
 
+		//set all lights to the constant buffer light
+		m_ShrekconstantBufferData.light = m_constantBufferData.light;
+		m_PercyconstantBufferData.light = m_constantBufferData.light;
+		m_JynxconstantBufferData.light = m_constantBufferData.light;
+		m_RTCconstantBufferData.light = m_constantBufferData.light;
+		m_SkyconstantBufferData.light = m_constantBufferData.light;
 		Rotate(radians);
 	}
-
+	
 
 	// Update or move camera here
 	UpdateCamera(timer, 5.0f, 0.75f);
@@ -103,23 +132,32 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
-
+	m_constantBufferData.model._14 = 0.0f;
+	m_constantBufferData.model._24 = 6.0f;
+	m_constantBufferData.model._34 = -8.0f;
 	//m_ShrekconstantBufferData.model = yee;
 	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14f)));
 	m_ShrekconstantBufferData.projection = m_constantBufferData.projection;
 	m_ShrekconstantBufferData.view = m_constantBufferData.view;
 
-	
+	m_PercyconstantBufferData.model._24 = 6.5f;
+	m_PercyconstantBufferData.model._34 = 2.0f;
+
 	//m_PercyconstantBufferData.model = yee;
 	m_PercyconstantBufferData.projection = m_constantBufferData.projection;
 	m_PercyconstantBufferData.view = m_constantBufferData.view;
 
+	m_PercyconstantBufferData.model._34 = 1.0f;
 	m_JynxconstantBufferData.projection = m_constantBufferData.projection;
 	m_JynxconstantBufferData.view = m_constantBufferData.view;
 
 	m_RTCconstantBufferData.model = yee;
 	m_RTCconstantBufferData.projection = m_constantBufferData.projection;
 	m_RTCconstantBufferData.view = m_constantBufferData.view;
+
+	m_SkyconstantBufferData.model = yee;
+	m_SkyconstantBufferData.projection = m_constantBufferData.projection;
+	m_SkyconstantBufferData.view = m_constantBufferData.view;
 }
 
 #pragma region Movements
@@ -273,6 +311,16 @@ void Sample3DSceneRenderer::Render(void)
 	}
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
+	context->RSSetViewports(1,m_viewportOne);
+	RenderTheMagic(context);
+
+	context->RSSetViewports(1, m_viewportTwo);
+	RenderTheMagic(context);
+	
+
+}
+
+void Sample3DSceneRenderer::RenderTheMagic(ID3D11DeviceContext3 * context) {
 	ID3D11RenderTargetView *const targets[1] = { m_deviceResources->GetBackBufferRenderTargetView() };
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_camera))));
 
@@ -282,9 +330,9 @@ void Sample3DSceneRenderer::Render(void)
 #pragma region DrawtheCube
 
 	context->UpdateSubresource1(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0, 0);
-	m_constantBufferData.model._14 = 0.0f;
-	m_constantBufferData.model._24 = 6.0f;
-	m_constantBufferData.model._34 = -8.0f;
+	//m_constantBufferData.model._14 = 0.0f;
+	//m_constantBufferData.model._24 = 6.0f;
+	//m_constantBufferData.model._34 = -8.0f;
 	// Prepare the constant buffer to send it to the graphics device.
 	// Each vertex is one instance of the VertexPositionColor struct.
 	UINT stride = sizeof(VertexPositionColor);
@@ -304,15 +352,38 @@ void Sample3DSceneRenderer::Render(void)
 	context->DrawIndexed(m_indexCount, 0, 0);
 #pragma endregion
 
+#pragma region DrawtheSky
+
+	context->UpdateSubresource1(m_SkyconstantBuffer.Get(), 0, NULL, &m_SkyconstantBufferData, 0, 0, 0);
+	// Prepare the constant buffer to send it to the graphics device.
+	// Each vertex is one instance of the VertexPositionColor struct.
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_SkyvertexBuffer.GetAddressOf(), &stride, &offset);
+	// Each index is one 16-bit unsigned integer (short).
+	context->IASetIndexBuffer(m_SkyindexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_SkyinputLayout.Get());
+	// Attach our vertex shader.
+	context->VSSetShader(m_SkyvertexShader.Get(), nullptr, 0);
+	// Send the constant buffer to the graphics device.
+	context->VSSetConstantBuffers1(0, 1, m_SkyconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	// Attach our pixel shader.
+	context->PSSetShader(m_SkypixelShader.Get(), nullptr, 0);
+	context->PSSetShaderResources(0, 1, m_SkyResouceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_SkySamplerState.GetAddressOf());
+	// Draw the objects.
+	context->DrawIndexed(m_SkyindexCount, 0, 0);
+#pragma endregion
 
 
 
 #pragma region DrawPercy
 
 	context->UpdateSubresource1(m_PercyconstantBuffer.Get(), 0, NULL, &m_PercyconstantBufferData, 0, 0, 0);
-	m_PercyconstantBufferData.model._24 = 6.5f;
+	/*m_PercyconstantBufferData.model._24 = 6.5f;
 	m_PercyconstantBufferData.model._34 = 2.0f;
-
+*/
 	stride = sizeof(VertexPositionUVNormal);
 	offset = 0;
 	context->IASetVertexBuffers(0, 1, m_PercyvertexBuffer.GetAddressOf(), &stride, &offset);
@@ -331,7 +402,7 @@ void Sample3DSceneRenderer::Render(void)
 
 
 	context->UpdateSubresource1(m_ShrekconstantBuffer.Get(), 0, NULL, &m_ShrekconstantBufferData, 0, 0, 0);
-	m_PercyconstantBufferData.model._34 = 1.0f;
+	/*m_PercyconstantBufferData.model._34 = 1.0f;*/
 	stride = sizeof(VertexPositionUVNormal);
 	offset = 0;
 	context->IASetVertexBuffers(0, 1, m_ShrekvertexBuffer.GetAddressOf(), &stride, &offset);
@@ -350,7 +421,7 @@ void Sample3DSceneRenderer::Render(void)
 
 
 	context->UpdateSubresource1(m_JynxconstantBuffer.Get(), 0, NULL, &m_JynxconstantBufferData, 0, 0, 0);
-	m_JynxconstantBufferData.model._34 = -4.0f;
+	//m_JynxconstantBufferData.model._34 = -4.0f;
 	stride = sizeof(VertexPositionUVNormal);
 	offset = 0;
 	context->IASetVertexBuffers(0, 1, m_JynxvertexBuffer.GetAddressOf(), &stride, &offset);
@@ -371,9 +442,9 @@ void Sample3DSceneRenderer::Render(void)
 #pragma region Rendertotexture
 #pragma region DrawtheCube
 
-	m_constantBufferData.model._14 = 0.0f;
+	/*m_constantBufferData.model._14 = 0.0f;
 	m_constantBufferData.model._24 = 6.0f;
-	m_constantBufferData.model._34 = -8.0f;
+	m_constantBufferData.model._34 = -8.0f;*/
 	// Prepare the constant buffer to send it to the graphics device.
 
 	context->UpdateSubresource1(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0, 0);
@@ -395,7 +466,29 @@ void Sample3DSceneRenderer::Render(void)
 	context->DrawIndexed(m_indexCount, 0, 0);
 #pragma endregion
 
+#pragma region DrawtheSky
 
+	context->UpdateSubresource1(m_SkyconstantBuffer.Get(), 0, NULL, &m_SkyconstantBufferData, 0, 0, 0);
+	// Prepare the constant buffer to send it to the graphics device.
+	// Each vertex is one instance of the VertexPositionColor struct.
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_SkyvertexBuffer.GetAddressOf(), &stride, &offset);
+	// Each index is one 16-bit unsigned integer (short).
+	context->IASetIndexBuffer(m_SkyindexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_SkyinputLayout.Get());
+	// Attach our vertex shader.
+	context->VSSetShader(m_SkyvertexShader.Get(), nullptr, 0);
+	// Send the constant buffer to the graphics device.
+	context->VSSetConstantBuffers1(0, 1, m_SkyconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	// Attach our pixel shader.
+	context->PSSetShader(m_SkypixelShader.Get(), nullptr, 0);
+	context->PSSetShaderResources(0, 1, m_SkyResouceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_SkySamplerState.GetAddressOf());
+	// Draw the objects.
+	context->DrawIndexed(m_SkyindexCount, 0, 0);
+#pragma endregion
 
 
 #pragma region DrawPercy
@@ -479,9 +572,7 @@ void Sample3DSceneRenderer::Render(void)
 	context->PSSetSamplers(0, 1, m_RTCTexSampleState.GetAddressOf());
 	context->DrawIndexed(m_RTCindexCount, 0, 0);
 #pragma endregion
-
 }
-
 void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 {
 #pragma region Cube
@@ -676,8 +767,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 		SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
-		//DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&SamDesc, &m_RTCTexSampleState));
-		//DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/percyface.dds", NULL, &m_RTCTexResourceView));
+		
 
 		D3D11_SUBRESOURCE_DATA RTCvertexBufferData = { 0 };
 		RTCvertexBufferData.pSysMem = RTCcubeVertices;
@@ -690,7 +780,7 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 		// a triangle to be rendered on the screen.
 		// For example: 0,2,1 means that the vertices with indexes
 		// 0, 2 and 1 from the vertex buffer compose the 
-		// first triangle of this mesh.
+		// first triangle of this mesh.0
 		static const unsigned short RTCcubeIndices[] =
 		{
 			0,1,3,
@@ -727,6 +817,110 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 	{
 		m_loadingComplete = true;
 	});*/
+#pragma endregion;
+
+#pragma region Sky
+	// Load shaders asynchronously.
+	auto SkyloadVSTask = DX::ReadDataAsync(L"SkyVertexShader.cso");
+	auto SkyloadPSTask = DX::ReadDataAsync(L"SkyPixelShader.cso");
+
+	// After the vertex shader file is loaded, create the shader and input layout.
+	auto createSkyVSTask = SkyloadVSTask.then([this](const std::vector<byte>& fileData)
+	{
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateVertexShader(&fileData[0], fileData.size(), nullptr, &m_SkyvertexShader));
+
+		static const D3D11_INPUT_ELEMENT_DESC SkyvertexDesc[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "UV", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateInputLayout(SkyvertexDesc, ARRAYSIZE(SkyvertexDesc), &fileData[0], fileData.size(), &m_SkyinputLayout));
+	});
+
+	// After the pixel shader file is loaded, create the shader and constant buffer.
+	auto createSkyPSTask = SkyloadPSTask.then([this](const std::vector<byte>& fileData)
+	{
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreatePixelShader(&fileData[0], fileData.size(), nullptr, &m_SkypixelShader));
+
+		CD3D11_BUFFER_DESC SkyconstantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&SkyconstantBufferDesc, nullptr, &m_SkyconstantBuffer));
+	});
+	/////////////
+
+
+	// Once both shaders are loaded, create the mesh.
+	auto SkycreateCubeTask = (createSkyPSTask && createSkyVSTask).then([this]()
+	{
+		// Load mesh vertices. Each vertex has a position and a color.
+		static const VertexPositionUVNormal SkycubeVertices[] =
+		{
+			{ XMFLOAT3(-50.5f, -50.5f, -50.5f), XMFLOAT3(-1.0f, -1.0f, -1.0f)  , XMFLOAT3(50.5f, 50.5f, 50.5f)},
+			{ XMFLOAT3(-50.5f, -50.5f,  50.5f), XMFLOAT3(-1.0f, -1.0f, 1.0f)   , XMFLOAT3(50.5f, 50.5f,  -50.5f)},
+			{ XMFLOAT3(-50.5f,  50.5f, -50.5f), XMFLOAT3(-1.0f, 1.0f, -1.0f)   , XMFLOAT3(50.5f,  -50.5f, 50.5f)},
+			{ XMFLOAT3(-50.5f,  50.5f,  50.5f), XMFLOAT3(-1.0f, 1.0f, 1.0f)    , XMFLOAT3(50.5f,  -50.5f,  -50.5f)},
+			{ XMFLOAT3(50.5f, -50.5f, -50.5f),  XMFLOAT3(1.0f, -1.0f, -1.0f)   , XMFLOAT3(-50.5f, 50.5f, 50.5f)},
+			{ XMFLOAT3(50.5f, -50.5f,  50.5f),  XMFLOAT3(1.0f, -1.0f, 1.0f)    , XMFLOAT3(-50.5f, 50.5f,  -50.5f)},
+			{ XMFLOAT3(50.5f,  50.5f, -50.5f),  XMFLOAT3(1.0f, 1.0f, -1.0f)    , XMFLOAT3(-50.5f,  -50.5f, 50.5f)},
+			{ XMFLOAT3(50.5f,  50.5f,  50.5f),  XMFLOAT3(1.0f, 1.0f, 1.0f)     , XMFLOAT3(-50.5f,  -50.5f,  -50.5f)}
+		};
+
+		D3D11_SUBRESOURCE_DATA SkyvertexBufferData = { 0 };
+		SkyvertexBufferData.pSysMem = SkycubeVertices;
+		SkyvertexBufferData.SysMemPitch = 0;
+		SkyvertexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(SkycubeVertices), D3D11_BIND_VERTEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&vertexBufferDesc, &SkyvertexBufferData, &m_SkyvertexBuffer));
+
+		// Load mesh indices. Each trio of indices represents
+		// a triangle to be rendered on the screen.
+		// For example: 0,2,1 means that the vertices with indexes
+		// 0, 2 and 1 from the vertex buffer compose the 
+		// first triangle of this mesh.
+		static const unsigned short SkycubeIndices[] =
+		{
+			2,1,0, // -x
+			2,3,1,
+
+			5,6,4, // +x
+			7,6,5,
+
+			1,5,0, // -y
+			5,4,0,
+
+			6,7,2, // +y
+			7,3,2,
+
+			4,6,0, // -z
+			6,2,0,
+
+			3,7,1, // +z
+			7,5,1,
+		};
+
+		m_SkyindexCount = ARRAYSIZE(SkycubeIndices);
+
+		D3D11_SAMPLER_DESC SkySamDesc;
+		ZeroMemory(&SkySamDesc, sizeof(SkySamDesc));
+		SkySamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		SkySamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		SkySamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		SkySamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&SkySamDesc, &m_SkySamplerState));
+		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/spacemap.dds", NULL, &m_SkyResouceView));
+
+		D3D11_SUBRESOURCE_DATA SkyindexBufferData = { 0 };
+		SkyindexBufferData.pSysMem = SkycubeIndices;
+		SkyindexBufferData.SysMemPitch = 0;
+		SkyindexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC SkyindexBufferDesc(sizeof(SkycubeIndices), D3D11_BIND_INDEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&SkyindexBufferDesc, &SkyindexBufferData, &m_SkyindexBuffer));
+		
+		
+	});
+
 #pragma endregion;
 #pragma region kirbyShit
 
@@ -955,7 +1149,8 @@ void Sample3DSceneRenderer::ReleaseDeviceDependentResources(void)
 	m_JynxvertexBuffer.Reset();
 	m_JynxindexBuffer.Reset();
 
-
+	delete m_viewportOne;
+	delete m_viewportTwo;
 }
 
 #pragma region Loaders 

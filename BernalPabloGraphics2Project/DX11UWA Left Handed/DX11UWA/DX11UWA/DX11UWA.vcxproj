@@ -199,8 +199,10 @@
     <Image Include="Assets\Percy1.dds" />
     <Image Include="Assets\Percy1.png" />
     <Image Include="Assets\percyface.dds" />
+    <Image Include="Assets\seamless space_s.dds" />
     <Image Include="Assets\shrek.dds" />
     <Image Include="Assets\Shrek.png" />
+    <Image Include="Assets\SkyboxOcean.dds" />
     <Image Include="Assets\spacemap.dds" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
     <Image Include="Assets\Square150x150Logo.scale-200.png" />
@@ -270,6 +272,12 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="SkyPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="SkyVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

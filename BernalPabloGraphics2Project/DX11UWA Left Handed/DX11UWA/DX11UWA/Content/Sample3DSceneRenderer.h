@@ -26,7 +26,7 @@ namespace DX11UWA
 		inline bool IsTracking(void) { return m_tracking; }
 		void LoadObject(char * lePath, std::vector<VertexPositionUVNormal>& leVertexs, std::vector<unsigned int>& leIndices);
 		void LoadObjectNoNormal(char * lePath, std::vector<VertexPositionUVNormal>& leVertexs, std::vector<unsigned int>& leIndices);
-
+		void RenderTheMagic(ID3D11DeviceContext3 * context);
 		// Helper functions for keyboard and mouse input
 		void SetKeyboardButtons(const char* list);
 		void SetMousePosition(const Windows::UI::Input::PointerPoint^ pos);
@@ -61,8 +61,6 @@ namespace DX11UWA
 		Microsoft::WRL::ComPtr<ID3D11Texture2D>       m_RTCRenderTargetTextureMap;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView>   m_RTCRenderTargetView;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_RTCSRV;
-		DirectX::XMMATRIX                                 m_RTCTextureView;
-		DirectX::XMMATRIX                                 m_RTCTextureProjection;
 
 		Microsoft::WRL::ComPtr<ID3D11SamplerState>       m_RTCTexSampleState;
 
@@ -95,6 +93,16 @@ namespace DX11UWA
 		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_JynxconstantBuffer;
 		Microsoft::WRL::ComPtr<ID3D11SamplerState>  m_JynxSamplerState;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_JynxResouceView;
+
+		//Kirby
+		Microsoft::WRL::ComPtr<ID3D11InputLayout>	m_SkyinputLayout;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_SkyvertexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_SkyindexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_SkyvertexShader;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_SkypixelShader;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_SkyconstantBuffer;
+		Microsoft::WRL::ComPtr<ID3D11SamplerState>  m_SkySamplerState;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_SkyResouceView;
 		// System resources for cube geometry.
 		ModelViewProjectionConstantBuffer	m_constantBufferData;
 		uint32	m_indexCount;
@@ -116,6 +124,9 @@ namespace DX11UWA
 		ModelViewProjectionConstantBuffer	m_JynxconstantBufferData;
 		uint32	m_JynxindexCount;
 
+		//Sky
+		ModelViewProjectionConstantBuffer	m_SkyconstantBufferData;
+		uint32	m_SkyindexCount;
 		// Variables used with the rendering loop.
 		bool	m_loadingComplete;
 		float	m_degreesPerSecond;
@@ -130,7 +141,8 @@ namespace DX11UWA
 		DirectX::XMFLOAT4X4 m_camera;
 
 		// viewports
-		D3D11_VIEWPORT * m_viewports;
+		D3D11_VIEWPORT * m_viewportOne;
+		D3D11_VIEWPORT * m_viewportTwo;
 		bool Active;
 	};
 }

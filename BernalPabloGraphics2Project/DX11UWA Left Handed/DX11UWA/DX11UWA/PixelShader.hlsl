@@ -7,11 +7,20 @@ struct PixelShaderInput
 	float3 WorldPos : W_POSITION;
 	float3 uv : UV;
 	float3 normals : NORMAL;
+	float3 lightval : COLOR;
 };
 
 float4 DL(PixelShaderInput input)
 {
-	float3 LightDirection = { 0.0f, -0.3f, 1.0f };
+	float3x3 lightmovementz = { cos(input.lightval.x),-sin(input.lightval.x),0.0f,
+								sin(input.lightval.x), cos(input.lightval.x),0.0f,
+								0.0f,0.0f,1.0f };
+	
+	float3 LightDirection = { 0.0f, 0.3f, 1.0f };
+	LightDirection.x -= input.WorldPos.x;
+	LightDirection.y -= input.WorldPos.y;
+	LightDirection.z -= input.WorldPos.z;
+	LightDirection = mul(LightDirection, lightmovementz);
 	float LightRatio = saturate(dot(-normalize(LightDirection), input.normals));
 	float3 Color = { 1.0f, 1.0f, 1.0f };
 	float4 Return = float4(Color, 1.0f) * LightRatio;
@@ -20,9 +29,16 @@ float4 DL(PixelShaderInput input)
 
 float4 PL(PixelShaderInput input) {
 	float3 lightpos;
-	lightpos.x = -3.0f - input.WorldPos.x;
-	lightpos.y = 1.0f - input.WorldPos.y;
-	lightpos.z = 1.0f - input.WorldPos.z;
+	float3x3 lightmovementy = { cos(input.lightval.x),0.0f,sin(input.lightval.x),
+												0.0f,1.0f,0.0f,
+							-sin(input.lightval.x),0.0f, cos(input.lightval.x) };
+	float3 wposition = input.WorldPos.xyz;
+
+	wposition = mul(wposition, lightmovementy);
+	
+	lightpos.x = -3.0f - wposition.x;
+	lightpos.y = 1.0f - wposition.y;
+	lightpos.z = 1.0f - wposition.z;
 	float mag = sqrt(lightpos.x*lightpos.x + lightpos.y*lightpos.y + lightpos.z*lightpos.z);
 	float atenuation = 1.0f - saturate(mag / 10.0f);
 	float3 lightdir= normalize(lightpos);
@@ -36,11 +52,23 @@ float4 PL(PixelShaderInput input) {
 float4 SL(PixelShaderInput input)
 {
 	float3 lightpos;
-	lightpos.x = 2.0f - input.WorldPos.x;
-	lightpos.y = 3.0f - input.WorldPos.y;
-	lightpos.z = 1.0f - input.WorldPos.z;
+	float3x3 lightmovementy = { cos(input.lightval.x),0.0f,sin(input.lightval.x),
+		0.0f,1.0f,0.0f,
+		-sin(input.lightval.x),0.0f, cos(input.lightval.x) };
+	float3 wposition = input.WorldPos.xyz;
+
+	wposition = mul(wposition, lightmovementy);
+
+	lightpos.x = 2.0f - wposition.x;
+	lightpos.y = 3.0f - wposition.y;
+	lightpos.z = 1.0f - wposition.z;
 	//Set cone Direction
 	float3 Cone = { 0.0f, -1.0f, 0.0f };
+	float3x3 lightmovementz = { cos(input.lightval.x),-sin(input.lightval.x),0.0f,
+		sin(input.lightval.x), cos(input.lightval.x),0.0f,
+		0.0f,0.0f,1.0f };
+
+	Cone = mul(Cone, lightmovementz);
 	//Set Surface Normals
 	float3 SurfaceNormals = input.normals;
 	//Set Light Direction to Normalized light pos

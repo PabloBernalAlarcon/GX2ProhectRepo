@@ -12,8 +12,10 @@ Assets\Percy1.dds
 Assets\Percy1.png
 Assets\percyface.dds
 Assets\percytrain.obj
+Assets\seamless space_s.dds
 Assets\shrek.dds
 Assets\Shrek.png
+Assets\SkyboxOcean.dds
 Assets\spacemap.dds
 Assets\SplashScreen.scale-200.png
 Assets\Square150x150Logo.scale-200.png
@@ -28,4 +30,6 @@ PixelShader.cso
 postProcessPixel.cso
 SamplePixelShader.cso
 SampleVertexShader.cso
+SkyPixelShader.cso
+SkyVertexShader.cso
 VertexShader.cso

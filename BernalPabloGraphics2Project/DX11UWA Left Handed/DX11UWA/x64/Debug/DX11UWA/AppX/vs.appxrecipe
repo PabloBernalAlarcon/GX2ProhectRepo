@@ -27,13 +27,13 @@
     <AppXManifest Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-03-12T22:40:44.618</Modified>
+      <Modified>2017-03-19T00:31:28.409</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.exe">
       <PackagePath>DX11UWA.exe</PackagePath>
-      <Modified>2017-03-14T22:28:19.083</Modified>
+      <Modified>2017-03-19T02:31:42.253</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.winmd">
       <PackagePath>DX11UWA.winmd</PackagePath>
@@ -59,9 +59,17 @@
       <PackagePath>Assets\percyface.dds</PackagePath>
       <Modified>2017-03-09T23:21:11.034</Modified>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\seamless space_s.dds">
+      <PackagePath>Assets\seamless space_s.dds</PackagePath>
+      <Modified>2017-03-19T00:09:24.480</Modified>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\shrek.dds">
       <PackagePath>Assets\shrek.dds</PackagePath>
       <Modified>2017-03-04T00:08:27.219</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\SkyboxOcean.dds">
+      <PackagePath>Assets\SkyboxOcean.dds</PackagePath>
+      <Modified>2013-01-04T00:03:46.000</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\spacemap.dds">
       <PackagePath>Assets\spacemap.dds</PackagePath>
@@ -159,15 +167,23 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\PixelShader.cso">
       <PackagePath>PixelShader.cso</PackagePath>
-      <Modified>2017-03-09T23:42:40.468</Modified>
+      <Modified>2017-03-16T21:53:54.844</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\postProcessPixel.cso">
       <PackagePath>postProcessPixel.cso</PackagePath>
       <Modified>2017-03-12T23:42:59.084</Modified>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\SkyPixelShader.cso">
+      <PackagePath>SkyPixelShader.cso</PackagePath>
+      <Modified>2017-03-19T00:20:06.549</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\SkyVertexShader.cso">
+      <PackagePath>SkyVertexShader.cso</PackagePath>
+      <Modified>2017-03-19T00:17:55.874</Modified>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\VertexShader.cso">
       <PackagePath>VertexShader.cso</PackagePath>
-      <Modified>2017-03-09T23:45:32.774</Modified>
+      <Modified>2017-03-16T17:56:25.005</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.UniversalCRT.Debug\10.0.10586.0\\redist\Debug\X64\ucrtbased.dll">
       <PackagePath>ucrtbased.dll</PackagePath>
@@ -176,7 +192,7 @@
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-03-12T22:40:44.358</Modified>
+      <Modified>2017-03-19T00:31:28.331</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

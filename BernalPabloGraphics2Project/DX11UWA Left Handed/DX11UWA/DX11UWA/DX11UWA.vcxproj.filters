@@ -140,6 +140,12 @@
     <Image Include="Assets\percyface.dds">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\seamless space_s.dds">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SkyboxOcean.dds">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -182,6 +188,12 @@
       <Filter>Content\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="postProcessPixel.hlsl">
+      <Filter>Content\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyVertexShader.hlsl">
+      <Filter>Content\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyPixelShader.hlsl">
       <Filter>Content\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
