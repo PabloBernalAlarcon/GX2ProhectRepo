@@ -32,7 +32,9 @@ namespace DX11UWA
 		void SetMousePosition(const Windows::UI::Input::PointerPoint^ pos);
 		void SetInputDeviceData(const char* kb, const Windows::UI::Input::PointerPoint^ pos);
 
-
+		float m_nearP = 0.1;
+		float m_farP = 100.0f;
+		float m_FOV = 70.0f;
 	private:
 		void Rotate(float radians);
 		void UpdateCamera(DX::StepTimer const& timer, float const moveSpd, float const rotSpd);

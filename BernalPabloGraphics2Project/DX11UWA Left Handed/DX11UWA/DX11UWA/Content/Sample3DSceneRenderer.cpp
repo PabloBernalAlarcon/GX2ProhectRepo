@@ -308,6 +308,39 @@ void Sample3DSceneRenderer::UpdateCamera(DX::StepTimer const& timer, float const
 		XMMATRIX result = XMMatrixMultiply(translation, temp_camera);
 		XMStoreFloat4x4(&m_camera, result);
 	}
+
+	bool modify = false;
+	if (m_kbuttons['T'])
+		m_FOV *= 2, modify = true;
+	if (m_kbuttons['Y'])
+		m_FOV /= 2, modify = true;
+	if (m_kbuttons['G'])
+		m_nearP *= 2, modify = true;
+	if (m_kbuttons['H'])
+		m_nearP /= 2, modify = true;
+	if (m_kbuttons['N'])
+		m_farP *= 2, modify = true;
+	if (m_kbuttons['M'])
+		m_farP /= 2, modify = true;
+	if (m_nearP > m_farP || m_kbuttons['R'])
+	{
+		m_FOV = 70.0f;
+		m_farP = 500.0f;
+		m_nearP = 0.1f;
+		modify = true;
+	}
+
+	if (modify)
+	{
+		Size outputSize = m_deviceResources->GetOutputSize();
+		float aspectRatio = outputSize.Width / outputSize.Height;
+		float fovAngleY = m_FOV * XM_PI / 180.0f;
+		XMMATRIX perspectiveMatrix = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, m_nearP, m_farP);
+		XMFLOAT4X4 orientation = m_deviceResources->GetOrientationTransform3D();
+		XMMATRIX orientationMatrix = XMLoadFloat4x4(&orientation);
+		XMStoreFloat4x4(&m_constantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
+	}
+
 	if (m_kbuttons[VK_SPACE])
 	{
 		XMMATRIX translation = XMMatrixTranslation(0.0f, moveSpd * delta_time, 0.0f * 10);
