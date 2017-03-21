@@ -70,7 +70,7 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	//return base.Sample(samp, input.uv) * SpotLight;
 	float4 All = DirectionalLight + PointLight + SpotLight;
 	float4 colorf = ModelColor;
-	float Gray = (colorf.r + colorf.g + colorf.b )/5.0f;
+	float Gray = (colorf.r + colorf.g + colorf.b )/2.0f;
 	float4 ret = { Gray, Gray, Gray, colorf.a };
 	return ret;
 }

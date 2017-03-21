@@ -48,8 +48,50 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(void)
 	m_viewportTwo->Width = outputSize.Width/2;
 	m_viewportTwo->MinDepth = 0.0f;
 	m_viewportTwo->MaxDepth = 0.1f;
-	m_viewportTwo->TopLeftY = 0.0;
+	m_viewportTwo->TopLeftY = 0.0f;
 	m_viewportTwo->TopLeftX = outputSize.Width/2;
+
+	m_viewportThree = new D3D11_VIEWPORT();
+	m_viewportThree->Height = outputSize.Height;
+	m_viewportThree->Width = outputSize.Width;
+	m_viewportThree->MinDepth = 0.0f;
+	m_viewportThree->MaxDepth = 0.1f;
+	m_viewportThree->TopLeftY = 0.0f;
+	m_viewportThree->TopLeftX = 0.0f;
+
+	/*CD3D11_RASTERIZER_DESC rasterfront = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT());
+	CD3D11_RASTERIZER_DESC rasterback = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT());
+	CD3D11_RASTERIZER_DESC rasterreset = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT());
+	CD3D11_BLEND_DESC blenddesc = CD3D11_BLEND_DESC(CD3D11_DEFAULT());
+	CD3D11_BLEND_DESC blenddescreset = CD3D11_BLEND_DESC(CD3D11_DEFAULT());
+
+	rasterfront.FillMode = D3D11_FILL_SOLID;
+	rasterfront.CullMode = D3D11_CULL_FRONT;
+	rasterfront.DepthBias = 100;
+	DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateRasterizerState(&rasterfront, &rasterstatefront));
+
+	rasterback.FillMode = D3D11_FILL_SOLID;
+	rasterback.CullMode = D3D11_CULL_BACK;
+	rasterback.DepthBias = 100;
+	DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateRasterizerState(&rasterback, &rasterstateback));
+
+	rasterback.FillMode = D3D11_FILL_SOLID;
+	rasterback.CullMode = D3D11_CULL_NONE;
+	rasterback.DepthBias = 100;
+	DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateRasterizerState(&rasterback, &rasterstateback));
+
+	blenddesc.AlphaToCoverageEnable = TRUE;
+	blenddesc.RenderTarget[0].BlendEnable = TRUE;
+	blenddesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	blenddesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_DEST_ALPHA;
+	blenddesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blenddesc.RenderTarget[0].DestBlend = D3D11_BLEND_DEST_ALPHA;
+	blenddesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+
+	DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBlendState(&blenddesc, &blenderstate));*/
 
 	// This is a simple example of change that can be made when the app is in
 	// portrait or snapped view.
@@ -75,6 +117,8 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(void)
 
 	XMStoreFloat4x4(&m_ShrekconstantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
 
+	XMStoreFloat4x4(&m_GBconstantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
+
 	XMStoreFloat4x4(&m_PercyconstantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
 
 	XMStoreFloat4x4(&m_JynxconstantBufferData.projection, XMMatrixTranspose(perspectiveMatrix * orientationMatrix));
@@ -92,6 +136,8 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources(void)
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
 
 	XMStoreFloat4x4(&m_ShrekconstantBufferData.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
+
+	XMStoreFloat4x4(&m_GBconstantBufferData.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
 
 	XMStoreFloat4x4(&m_PercyconstantBufferData.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
 
@@ -120,6 +166,7 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 		m_PercyconstantBufferData.light = m_constantBufferData.light;
 		m_JynxconstantBufferData.light = m_constantBufferData.light;
 		m_RTCconstantBufferData.light = m_constantBufferData.light;
+		m_GBconstantBufferData.light = m_constantBufferData.light;
 		m_SkyconstantBufferData.light = m_constantBufferData.light;
 		Rotate(radians);
 	}
@@ -140,6 +187,9 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 	m_ShrekconstantBufferData.projection = m_constantBufferData.projection;
 	m_ShrekconstantBufferData.view = m_constantBufferData.view;
 
+	//XMStoreFloat4x4(&m_GBconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14f)));
+	
+
 	m_PercyconstantBufferData.model._24 = 6.5f;
 	m_PercyconstantBufferData.model._34 = 2.0f;
 
@@ -147,17 +197,37 @@ void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 	m_PercyconstantBufferData.projection = m_constantBufferData.projection;
 	m_PercyconstantBufferData.view = m_constantBufferData.view;
 
-	m_PercyconstantBufferData.model._34 = 1.0f;
+	m_JynxconstantBufferData.model._34 = -2.0f;
 	m_JynxconstantBufferData.projection = m_constantBufferData.projection;
 	m_JynxconstantBufferData.view = m_constantBufferData.view;
 
+
 	m_RTCconstantBufferData.model = yee;
+
+	m_RTCconstantBufferData.model._11 = 2.1f;
+	m_RTCconstantBufferData.model._22 = 2.1f;
+	m_RTCconstantBufferData.model._33 = 1.0f;
+
+	m_RTCconstantBufferData.model._14 = -0.6f;
+	m_RTCconstantBufferData.model._24 = 2.8f;
+	m_RTCconstantBufferData.model._34 = -1.5f;
+	//m_RTCconstantBufferData.model._14 = 22.0f;
+
+	//m_RTCconstantBufferData.model._11 = 5.0f;
+	//m_RTCconstantBufferData.model._32 = 10.0f;
 	m_RTCconstantBufferData.projection = m_constantBufferData.projection;
 	m_RTCconstantBufferData.view = m_constantBufferData.view;
 
 	m_SkyconstantBufferData.model = yee;
 	m_SkyconstantBufferData.projection = m_constantBufferData.projection;
 	m_SkyconstantBufferData.view = m_constantBufferData.view;
+
+
+	
+	m_GBconstantBufferData.model._14 = -10.0f;
+	m_GBconstantBufferData.model._24 = 1.0f;
+	m_GBconstantBufferData.projection = m_constantBufferData.projection;
+	m_GBconstantBufferData.view = m_constantBufferData.view;
 }
 
 #pragma region Movements
@@ -166,10 +236,11 @@ void Sample3DSceneRenderer::Rotate(float radians)
 {
 	// Prepare to pass the updated model matrix to the shader
 	//XMMATRIX whatever = XMLoadFloat4x4(&m_ShrekconstantBufferData.model);
+	XMStoreFloat4x4(&m_GBconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(3.14f)));
 	//XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixMultiply(XMMatrixIdentity(),XMMatrixTranspose(XMMatrixRotationY(radians))));
 	XMStoreFloat4x4(&m_ShrekconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(-radians)));
 
-	XMStoreFloat4x4(&m_RTCconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(-radians)));
+	//XMStoreFloat4x4(&m_RTCconstantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(-radians)));
 
 	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixRotationX(radians)));
 
@@ -186,6 +257,17 @@ void Sample3DSceneRenderer::Rotate(float radians)
 void Sample3DSceneRenderer::UpdateCamera(DX::StepTimer const& timer, float const moveSpd, float const rotSpd)
 {
 	const float delta_time = (float)timer.GetElapsedSeconds();
+
+	if (m_kbuttons['V'])
+	{
+		ActiveViews = true;
+
+	}
+	if (m_kbuttons['B'])
+	{
+		ActiveViews = false;
+
+	}
 
 	if (m_kbuttons['W'])
 	{
@@ -311,19 +393,41 @@ void Sample3DSceneRenderer::Render(void)
 	}
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
-	context->RSSetViewports(1,m_viewportOne);
-	RenderTheMagic(context);
 
-	context->RSSetViewports(1, m_viewportTwo);
-	RenderTheMagic(context);
+
+	if (ActiveViews)
+	{
+		context->RSSetViewports(1, m_viewportOne);
+		RenderTheMagic(context);
+
+		context->RSSetViewports(1, m_viewportTwo);
+		RenderTheMagic(context);
+	}
+	else if(!ActiveViews)
+	{
+		context->RSSetViewports(1, m_viewportThree);
+		RenderTheMagic(context);
+	}
+
 	
 
 }
 
 void Sample3DSceneRenderer::RenderTheMagic(ID3D11DeviceContext3 * context) {
 	ID3D11RenderTargetView *const targets[1] = { m_deviceResources->GetBackBufferRenderTargetView() };
-	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_camera))));
 
+
+	//float blendFactor[4] = { 0.5f, 0.5f, 0.5f, 0.5f };
+	//UINT sampleMask = 0xffffffff;
+
+	//float blendFactorzero[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	//sampleMask = 0xffffffff;
+
+	//context->OMSetBlendState(blenderstatereset.Get(), blendFactor, sampleMask);
+
+	//context->OMSetRenderTargets(1, targets, m_deviceResources->GetDepthStencilView());
+
+	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_camera))));
 
 	context->OMSetRenderTargets(1, targets, m_deviceResources->GetDepthStencilView());
 
@@ -398,6 +502,26 @@ void Sample3DSceneRenderer::RenderTheMagic(ID3D11DeviceContext3 * context) {
 	context->DrawIndexed(m_PercyindexCount, 0, 0);
 
 #pragma endregion
+
+#pragma region DrawGB
+
+	context->UpdateSubresource1(m_GBconstantBuffer.Get(), 0, NULL, &m_GBconstantBufferData, 0, 0, 0);
+	
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_GBvertexBuffer.GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(m_GBindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_GBinputLayout.Get());
+	context->VSSetShader(m_GBvertexShader.Get(), nullptr, 0);
+	context->VSSetConstantBuffers1(0, 1, m_GBconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	context->PSSetShader(m_GBpixelShader.Get(), nullptr, 0);
+	context->PSSetShaderResources(0, 1, m_GBResouceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_GBSamplerState.GetAddressOf());
+	context->DrawIndexed(m_GBindexCount, 0, 0);
+
+#pragma endregion
+
 #pragma region DrawKriby
 
 
@@ -424,6 +548,15 @@ void Sample3DSceneRenderer::RenderTheMagic(ID3D11DeviceContext3 * context) {
 	//m_JynxconstantBufferData.model._34 = -4.0f;
 	stride = sizeof(VertexPositionUVNormal);
 	offset = 0;
+
+	/*context->OMSetBlendState(blenderstate.Get(), blendFactor, sampleMask);
+	context->RSSetState(rasterstatefront.Get());
+	context->DrawIndexed(m_JynxindexCount, 0, 0);
+	context->RSSetState(rasterstateback.Get());
+	context->DrawIndexed(m_JynxindexCount, 0, 0);
+	context->OMSetBlendState(blenderstatereset.Get(), blendFactorzero, sampleMask);
+	context->RSSetState(rasterstatereset.Get());*/
+
 	context->IASetVertexBuffers(0, 1, m_JynxvertexBuffer.GetAddressOf(), &stride, &offset);
 	context->IASetIndexBuffer(m_JynxindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -433,7 +566,9 @@ void Sample3DSceneRenderer::RenderTheMagic(ID3D11DeviceContext3 * context) {
 	context->PSSetShader(m_JynxpixelShader.Get(), nullptr, 0);
 	context->PSSetShaderResources(0, 1, m_JynxResouceView.GetAddressOf());
 	context->PSSetSamplers(0, 1, m_JynxSamplerState.GetAddressOf());
+
 	context->DrawIndexed(m_JynxindexCount, 0, 0);
+
 #pragma endregion
 	context->OMSetRenderTargets(1, m_RTCRenderTargetView.GetAddressOf(), m_deviceResources->GetDepthStencilView());
 	context->ClearRenderTargetView(m_RTCRenderTargetView.Get(), DirectX::Colors::SeaGreen);
@@ -507,6 +642,25 @@ void Sample3DSceneRenderer::RenderTheMagic(ID3D11DeviceContext3 * context) {
 	context->PSSetShaderResources(0, 1, m_PercyResouceView.GetAddressOf());
 	context->PSSetSamplers(0, 1, m_PercySamplerState.GetAddressOf());
 	context->DrawIndexed(m_PercyindexCount, 0, 0);
+
+#pragma endregion
+
+#pragma region DrawGB
+
+	context->UpdateSubresource1(m_GBconstantBuffer.Get(), 0, NULL, &m_GBconstantBufferData, 0, 0, 0);
+
+	stride = sizeof(VertexPositionUVNormal);
+	offset = 0;
+	context->IASetVertexBuffers(0, 1, m_GBvertexBuffer.GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(m_GBindexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context->IASetInputLayout(m_GBinputLayout.Get());
+	context->VSSetShader(m_GBvertexShader.Get(), nullptr, 0);
+	context->VSSetConstantBuffers1(0, 1, m_GBconstantBuffer.GetAddressOf(), nullptr, nullptr);
+	context->PSSetShader(m_GBpixelShader.Get(), nullptr, 0);
+	context->PSSetShaderResources(0, 1, m_GBResouceView.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_GBSamplerState.GetAddressOf());
+	context->DrawIndexed(m_GBindexCount, 0, 0);
 
 #pragma endregion
 
@@ -983,6 +1137,71 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources(void)
 		indexBufferData.SysMemSlicePitch = 0;
 		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(unsigned int) * ShrekIndices.size(), D3D11_BIND_INDEX_BUFFER);
 		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_ShrekindexBuffer));
+	});
+
+#pragma endregion
+
+#pragma region GBShit
+
+	//Shrek Shit
+	loadVSTask = DX::ReadDataAsync(L"VertexShader.cso");
+	loadPSTask = DX::ReadDataAsync(L"PixelShader.cso");
+
+	auto createGBVSTask = loadVSTask.then([this](const std::vector<byte>& fileData)
+	{
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateVertexShader(&fileData[0], fileData.size(), nullptr, &m_GBvertexShader));
+
+		static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "UV", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateInputLayout(vertexDesc, ARRAYSIZE(vertexDesc), &fileData[0], fileData.size(), &m_GBinputLayout));
+	});
+
+	auto createGBPSTask = loadPSTask.then([this](const std::vector<byte>& fileData)
+	{
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreatePixelShader(&fileData[0], fileData.size(), nullptr, &m_GBpixelShader));
+
+		CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&constantBufferDesc, nullptr, &m_GBconstantBuffer));
+	});
+
+	auto createGBTask = (createGBPSTask && createGBVSTask).then([this]()
+	{
+		std::vector<VertexPositionUVNormal> GBVertices;
+		std::vector<unsigned int> GBIndices;
+		char * ItsAllOgreNow = "Assets/hat_gameboy_model.obj";
+		LoadObject(ItsAllOgreNow, GBVertices, GBIndices);
+
+		D3D11_SAMPLER_DESC SamDesc;
+		ZeroMemory(&SamDesc, sizeof(SamDesc));
+		SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateSamplerState(&SamDesc, &m_GBSamplerState));
+		DX::ThrowIfFailed(CreateDDSTextureFromFile(m_deviceResources->GetD3DDevice(), L"Assets/gbhat.dds", NULL, &m_GBResouceView));
+
+		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
+		vertexBufferData.pSysMem = GBVertices.data();
+		vertexBufferData.SysMemPitch = 0;
+		vertexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(VertexPositionUVNormal) * GBVertices.size(), D3D11_BIND_VERTEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &m_GBvertexBuffer));
+
+
+		m_GBindexCount = GBIndices.size();
+
+		D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
+		indexBufferData.pSysMem = GBIndices.data();
+		indexBufferData.SysMemPitch = 0;
+		indexBufferData.SysMemSlicePitch = 0;
+		CD3D11_BUFFER_DESC indexBufferDesc(sizeof(unsigned int) * GBIndices.size(), D3D11_BIND_INDEX_BUFFER);
+		DX::ThrowIfFailed(m_deviceResources->GetD3DDevice()->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_GBindexBuffer));
 	});
 
 #pragma endregion

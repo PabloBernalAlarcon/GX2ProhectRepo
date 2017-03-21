@@ -73,6 +73,16 @@ namespace DX11UWA
 		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_ShrekconstantBuffer;
 		Microsoft::WRL::ComPtr<ID3D11SamplerState>  m_ShrekSamplerState;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_ShrekResouceView;
+		
+		//GB
+		Microsoft::WRL::ComPtr<ID3D11InputLayout>	m_GBinputLayout;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_GBvertexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_GBindexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_GBvertexShader;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_GBpixelShader;
+		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_GBconstantBuffer;
+		Microsoft::WRL::ComPtr<ID3D11SamplerState>  m_GBSamplerState;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_GBResouceView;
 
 		//Percy
 		Microsoft::WRL::ComPtr<ID3D11InputLayout>	m_PercyinputLayout;
@@ -116,6 +126,11 @@ namespace DX11UWA
 		ModelViewProjectionConstantBuffer	m_ShrekconstantBufferData;
 		uint32	m_ShrekindexCount;
 
+
+		//GB
+		ModelViewProjectionConstantBuffer	m_GBconstantBufferData;
+		uint32	m_GBindexCount;
+
 		//Percy
 		ModelViewProjectionConstantBuffer	m_PercyconstantBufferData;
 		uint32	m_PercyindexCount;
@@ -143,7 +158,15 @@ namespace DX11UWA
 		// viewports
 		D3D11_VIEWPORT * m_viewportOne;
 		D3D11_VIEWPORT * m_viewportTwo;
-		bool Active;
+		D3D11_VIEWPORT * m_viewportThree;
+		bool ActiveViews = false;
+
+		//// transparency
+		//Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterstatefront;
+		//Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterstateback;
+		//Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterstatereset;
+		//Microsoft::WRL::ComPtr<ID3D11BlendState> blenderstate;
+		//Microsoft::WRL::ComPtr<ID3D11BlendState> blenderstatereset;
 	};
 }
 

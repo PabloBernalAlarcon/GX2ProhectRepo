@@ -27,17 +27,21 @@
     <AppXManifest Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-03-19T00:31:28.409</Modified>
+      <Modified>2017-03-21T18:51:05.741</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.exe">
       <PackagePath>DX11UWA.exe</PackagePath>
-      <Modified>2017-03-19T02:31:42.253</Modified>
+      <Modified>2017-03-21T19:34:25.053</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\DX11UWA.winmd">
       <PackagePath>DX11UWA.winmd</PackagePath>
       <Modified>2017-03-07T22:52:20.996</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\gbhat.dds">
+      <PackagePath>Assets\gbhat.dds</PackagePath>
+      <Modified>2017-03-21T18:50:07.287</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\jynx.dds">
       <PackagePath>Assets\jynx.dds</PackagePath>
@@ -157,6 +161,10 @@
       <PackagePath>Assets\jynx.obj</PackagePath>
       <Modified>2017-03-07T21:55:48.590</Modified>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\DX11UWA\Assets\hat_gameboy_model.obj">
+      <PackagePath>Assets\hat_gameboy_model.obj</PackagePath>
+      <Modified>2017-03-21T18:37:38.847</Modified>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\SamplePixelShader.cso">
       <PackagePath>SamplePixelShader.cso</PackagePath>
       <Modified>2017-03-07T22:52:15.089</Modified>
@@ -171,7 +179,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\postProcessPixel.cso">
       <PackagePath>postProcessPixel.cso</PackagePath>
-      <Modified>2017-03-12T23:42:59.084</Modified>
+      <Modified>2017-03-21T19:49:36.500</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\SkyPixelShader.cso">
       <PackagePath>SkyPixelShader.cso</PackagePath>
@@ -192,7 +200,7 @@
     <AppxPackagedFile Include="C:\Users\Pablo\Desktop\GX2ProhectRepo\BernalPabloGraphics2Project\DX11UWA Left Handed\DX11UWA\x64\Debug\DX11UWA\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-03-19T00:31:28.331</Modified>
+      <Modified>2017-03-21T18:51:05.550</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>
